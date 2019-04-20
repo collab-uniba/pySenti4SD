@@ -1,0 +1,134 @@
+import os
+import pickle
+import logging
+import csv
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+
+from sklearn.externals.joblib import Memory
+
+logging.basicConfig(level = logging.INFO, format = "[%(levelname)s] %(asctime)s - %(message)s")
+        
+    
+def check_file_existence(file_path):
+    if not os.path.isfile(file_path):
+        return False
+    else:
+        return True
+        
+def check_file_extension(file_path, allowed_extension):
+    extension = os.path.splitext(file_path)[1]
+    if extension not in allowed_extension:
+        return False
+    else:
+        return True
+        
+def check_csv(csv_path):
+    if not check_file_existence(csv_path):
+        raise OSError ("FILE NOT FOUND : {} wasn't found".format(csv_path))
+    if not check_file_extension(csv_path, ['.csv']):
+        raise OSError("WRONG FILE EXTENSION : {} wasn't a csv file.".format(csv_path))
+        
+def process_csv_data(chunk, i, verbose = 0):
+    elaborated_chunk = []
+    chunk = chunk.dropna(how="any")
+    #elaborated_chunk.append(np.float32(chunk.iloc[:, 1:-1].values))
+    elaborated_chunk.append(np.float64(chunk.iloc[:, 1:-1].values))
+    elaborated_chunk.append(chunk.iloc[:, -1:].values.ravel())
+    if verbose == 1:
+        logging.info("Chunk {} readed".format(i))
+    return elaborated_chunk
+
+            
+def from_csv(csv_path, chunk_size, verbose = 0):
+    if verbose == 1:
+        logging.info("Start reading training set in chunks...")
+        start = datetime.now()
+    X = np.array([])
+    y = np.array([])
+    i = 0
+    for chunk in pd.read_csv(csv_path, chunksize = chunk_size, delimiter = ','):
+        #elaborated_chunk = process_csv_data(chunk, i, verbose)
+        chunk = chunk.dropna(how = "any")
+        if len(X) == 0 and len(y) == 0:
+            X = chunk.iloc[:, 1:-1].values
+            #X = np.float32(chunk.iloc[:, 1:-1].values)
+            y = chunk.iloc[:, -1:].values.ravel()
+        else:
+            X = np.concatenate((X, chunk.iloc[:, 1:-1].values))
+            y = np.concatenate((y, chunk.iloc[:, -1:].values.ravel()))
+            #X.append(chunk.iloc[:, 1:-1].values)
+            #y.append()
+        if verbose == 1:
+            logging.info("Chunk {} readed".format(i))
+        i += 1
+    #X = np.concatenate(X)
+    #y = np.concatenate(y)
+    #y = y.ravel()
+    del chunk
+    if verbose == 1:
+        end = datetime.now() - start
+        logging.info("Elapsed time : {}".format(end))
+    return X, y 
+
+def save_classifier(clf, file_name = "Senti4SD_model"):
+    #if not os.path.exists('classifier'):
+    #    os.mkdir('classifier')
+    filehandler = open('../{}.mdl'.format(file_name), 'wb')
+    pickle.dump(clf, filehandler)
+    logging.info("Model saved as {} inside the main folder".format(file_name))
+    
+def load_classifier(file_name = "Senti4SD_model"):
+#    if not os.path.exists('classifier'):
+#        os.mkdir('classifier')
+    filehandler = open('../{}.clf'.format(file_name), 'rb')
+    return pickle.load(filehandler)
+    
+def get_id(line):
+    temp = line.split(",")[0]
+    temp = temp.replace("t", "")
+    return int(temp)
+            
+def insertion_sort(lines):
+    for i in range(0, len(lines)):
+        temp = lines[i]
+        value = get_id(lines[i])
+        j = i - 1
+        while j >= 0 and get_id(lines[j]) > value:
+            lines[j + 1] = lines[j]
+            j -= 1
+        lines[j + 1] = temp
+
+def find_lines(input_file, lines_number):
+    #TO-DO handle error
+    temp_lines_number = lines_number
+    lines = []
+    max_line_number = max(lines_number)
+    with open(input_file, 'r', newline='') as f:
+        input_reader = csv.reader(f, delimiter = ';')
+        #count = 0
+        input_row = [row for row in input_reader]
+        i = 0
+        while len(temp_lines_number) != len(lines):
+            count = 0
+            found = False
+            while i < len(input_row):
+                if count > max_line_number or found == True:
+                    break
+                if count == temp_lines_number[i]:
+                    lines.append(input_row[count][0])
+                    found = True
+                    #temp_lines_number.pop()
+                    #input_row.pop(count)
+                count += 1
+            i += 1
+    f.close()
+    return lines
+
+def save_params(model):
+    with open('best_params.txt', 'w+') as best_params:
+        for k, v in model.get_params().items():
+            best_params.write("{} : {} \n".format(str(k), str(v)))
+    best_params.close()
