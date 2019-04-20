@@ -24,7 +24,6 @@ def classification(model, csv_file, dictionary, pred_file):
     chunk.dropna(how="any")
     pred = model.predict(chunk.iloc[:, 1:].values)
     lines_number = [get_id(id) for id in chunk['id'].values]
-    print(lines_number)
     if dictionary is not None: 
         lines = find_lines(dictionary, lines_number)
         lines_number = [id+1 for id in lines_number]
