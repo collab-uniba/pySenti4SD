@@ -50,7 +50,7 @@ while getopts ":h:i:d:m:c:j:o:" OPTIONS; do
           outputFile="$SCRIPTDIR/$OPTARG"
           ;;
         \?)
-          echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+          echo -e \\n"Option $OPTARG not allowed."
           help
           ;;
     esac
