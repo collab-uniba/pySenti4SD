@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 from sklearn.externals.joblib import Parallel,delayed
 
-from training.utils import load_classifier, check_csv, get_id, find_lines
+from utils import load_classifier, check_csv, get_id, find_lines
 
 
 def create_prediction_file(dictionary, pred_file):
@@ -19,7 +19,7 @@ def create_prediction_file(dictionary, pred_file):
             prediction.write("ROW,DOCUMENT,PREDICTED \n")
     prediction.close()
 
-def classification(model, csv_file, dictionary = None, pred_file):
+def classification(model, csv_file, dictionary, pred_file):
     chunk = pd.read_csv(csv_file, delimiter = ',')
     chunk.dropna(how="any")
     pred = model.predict(chunk.iloc[:, 1:].values)
@@ -57,7 +57,6 @@ def create_split_and_predict(file, dictionary, model, chunk_size, number_of_spli
                             temp.append(next(csv_file))
                             start_chunk += 1
                         chunk_file = './temp_split/split-{}.csv'.format(count)
-                        #insertion_sort(temp)
                         with open(chunk_file, 'w+') as chunk_file:
                             chunk_file.write(header)
                             chunk_file.writelines(line for line in temp)
@@ -69,7 +68,6 @@ def create_split_and_predict(file, dictionary, model, chunk_size, number_of_spli
                     except StopIteration:
                         stop = True
                         chunk_file = './temp_split/split-{}.csv'.format(count)
-                        #insertion_sort(temp)
                         with open(chunk_file, 'w+') as chunk_file:
                             chunk_file.write(header)
                             chunk_file.writelines(line for line in temp)
