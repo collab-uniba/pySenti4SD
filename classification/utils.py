@@ -11,7 +11,7 @@ from sklearn.externals.joblib import Memory
 
 logging.basicConfig(level = logging.INFO, format = "[%(levelname)s] %(asctime)s - %(message)s")
         
-    
+        
 def check_file_existence(file_path):
     if not os.path.isfile(file_path):
         return False
