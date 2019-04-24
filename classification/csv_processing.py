@@ -18,6 +18,7 @@ def main():
                        required = True)
     args = parser.parse_args()
     input_file = args.input
+    input_file_no_ext = input_file.split('.')[0]
     try:
         check_csv(input_file)
         with open(input_file, 'r+', newline = '') as csv_file:
@@ -33,13 +34,13 @@ def main():
             if len(header) == 2:
                 if header[0].lower() == 'id' and header[1].lower() == 'text':
                     text_rows = [row[1] for row in csv_file_reader]
-                    write_csv(input_file, csv_delimiter, text_rows)
+                    write_csv(input_file_no_ext, csv_delimiter, text_rows)
                 else:
                     print("Wrong header name for csv file") 
             elif len(header) == 1:
                 if(header[0].lower() == 'text'):
                     text_rows = [row[0] for row in csv_file_reader]
-                    write_csv(input_file, csv_delimiter, text_rows)
+                    write_csv(input_file_no_ext, csv_delimiter, text_rows)
             elif len(header) == 0:
                 print("Empty csv file.")
             else:

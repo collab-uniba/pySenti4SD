@@ -71,31 +71,6 @@ def get_id(line):
     temp = temp.replace("t", "")
     return int(temp)
 
-def find_lines(input_file, lines_number):
-    #TODO handle error
-    temp_lines_number = lines_number
-    lines = []
-    max_line_number = max(lines_number)
-    with open(input_file, 'r', newline='') as f:
-        input_reader = csv.reader(f, delimiter = ';')
-        input_row = [row for row in input_reader]
-        i = 0
-        while len(temp_lines_number) != len(lines):
-            count = 0
-            found = False
-            while i < len(input_row):
-                if count > max_line_number or found == True:
-                    break
-                if count == temp_lines_number[i]:
-                    lines.append(input_row[count][0])
-                    found = True
-                    #temp_lines_number.pop()
-                    #input_row.pop(count)
-                count += 1
-            i += 1
-    f.close()
-    return lines
-
 def save_params(model):
     with open('best_params.txt', 'w+') as best_params:
         for k, v in model.get_params().items():
