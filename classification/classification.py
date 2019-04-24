@@ -83,11 +83,11 @@ def order_csv(pred_csv, input_csv, csv_delimiter, id, dictionary):
     change = False
     df = {}
     temp_input = None
-    if id is not None:
+    if id:
         change = True
         temp_input = pd.read_csv(input_csv, delimiter = csv_delimiter)
         df.update({'ID': temp_input.iloc[:, 0:1].values.ravel()})
-    if dictionary is not None:
+    if dictionary:
         change = True
         if temp_input is None:
             temp_input = pd.read_csv(input_csv, delimiter = csv_delimiter)

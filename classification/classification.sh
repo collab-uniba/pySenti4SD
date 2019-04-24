@@ -69,7 +69,6 @@ else
 
     IFS='.' read -ra FILENAMESPLIT <<< "$inputFile"
     jarInputFile="${FILENAMESPLIT[0]}_jar.csv"
-    echo $jarInputFile
 
     #-F A: all features to be considered
     #-i file_name: a file containg a document for every line
