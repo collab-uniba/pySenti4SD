@@ -4,6 +4,7 @@ import argparse
 import pickle
 import csv
 import sys
+import logging
 from datetime import datetime
 
 import pandas as pd
@@ -11,6 +12,7 @@ from sklearn.externals.joblib import Parallel,delayed
 
 from utils import load_classifier, check_csv, get_id
 
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 def create_prediction_file(pred_csv):
     with open(pred_csv, 'w+') as prediction:
@@ -28,8 +30,7 @@ def classification(model, jar_csv_chunk, pred_file):
     
 
 def create_split_and_predict(jar_csv, model, chunk_size, number_of_split, pred_file):
-    #TODO Caricare il classificatore corretto
-    print("Start classification...")
+    logging.info("Start classification...")
     start = datetime.now()
     if not os.path.exists('temp_split'):
         os.mkdir('temp_split')
@@ -71,7 +72,7 @@ def create_split_and_predict(jar_csv, model, chunk_size, number_of_split, pred_f
                 for csv in csv_files:
                     os.remove(csv)
             end = datetime.now() - start
-            print("Elapsed time : {}".format(end))
+            logging.info("Elapsed time : {}".format(end))
             os.rmdir('temp_split')
         except StopIteration:
             print('Empty file.')
@@ -94,11 +95,7 @@ def order_csv(pred_csv, input_csv, csv_delimiter, id, dictionary):
     if not change:
         temp.to_csv(pred_csv, index = False)
     else:
-        print(temp.head(5))
         temp_predicted = temp.iloc[:, -1:].values.ravel()
-        print(len(temp_predicted))
-        print(temp_predicted[1])
-        print(temp_predicted[2])
         df.update({'PREDICTED': temp_predicted})
         temp = pd.DataFrame(df)
         temp.to_csv(pred_csv, index = False)
@@ -148,10 +145,10 @@ def main():
         jar_csv = args.input[0]
         input_csv = args.input[1]
     elif len(args.input) > 2:
-        print("Too many input file.")
+        logging.error("Too many input file. [jar generated csv][input csv]")
         sys.exit(1)
     elif len(args.input) < 2:
-        print("Error")
+        print("Two input file are required. [jar generated csv][input csv]")
         sys.exit(1)
 
     try:
@@ -161,9 +158,7 @@ def main():
         with open(input_csv, 'r+', newline = '') as csv_file:
             try: 
                 csv_delimiter = csv.Sniffer().sniff(csv_file.read(2048)).delimiter
-                print("delimiter = '{}'".format(csv_delimiter))
             except csv.Error as e:
-                print("Can't find delimiter ';' used.")
                 csv_delimiter = ';'
             csv_file.seek(0)
             csv_file_reader =  csv.reader(csv_file, delimiter = csv_delimiter)
@@ -177,7 +172,7 @@ def main():
                     else:
                         order_csv(args.output, input_csv, csv_delimiter, True, True)
                 else:
-                    print("Wrong header name for csv file") 
+                    logging.error("Wrong header name in {}".format(input_csv))
             elif len(header) == 1:
                 if(header[0].lower() == 'text'):
                     check_csv(jar_csv)
@@ -187,14 +182,16 @@ def main():
                     else:
                         order_csv(args.output, input_csv, csv_delimiter, False, True)
                 else:
-                    print("Wrong header for csv file")
+                    logging.error("Wrong header name in {}".format(input_csv))
             elif len(header) == 0:
-                print("Empty csv file.")
+                logging.error("{} is empty.".format(input_csv))
+                sys.exit(1)
             else:
-                print("Too many header inside csv file")
+                logging.error("Too many header in {}".format(input_csv))
+                sys.exit(1)
         csv_file.close()
     except OSError as e:
-        print(e)
+        logging.error(e)
         sys.exit(1)
 
 

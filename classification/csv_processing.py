@@ -1,6 +1,10 @@
 import csv
 import argparse
+import logging
+import sys
 from utils import check_csv
+
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 def write_csv(output_file, csv_delimiter, text_rows):
     with open("{}_jar.csv".format(output_file), 'w+', newline = '') as csv_file:
@@ -17,16 +21,15 @@ def main():
                        type = str,
                        required = True)
     args = parser.parse_args()
-    input_file = args.input
-    input_file_no_ext = input_file.split('.')[0]
+    input_csv = args.input
+    input_csv_no_ext = input_csv.split('.')[0]
     try:
-        check_csv(input_file)
-        with open(input_file, 'r+', newline = '') as csv_file:
+        check_csv(input_csv)
+        logging.info("Start formatting csv file")
+        with open(input_csv, 'r+', newline = '') as csv_file:
             try: 
                 csv_delimiter = csv.Sniffer().sniff(csv_file.read(2048)).delimiter
-                print("delimiter = '{}'".format(csv_delimiter))
             except csv.Error as e:
-                print("Can't find delimiter ';' used.")
                 csv_delimiter = ';'
             csv_file.seek(0)
             csv_file_reader =  csv.reader(csv_file, delimiter = csv_delimiter)
@@ -34,20 +37,26 @@ def main():
             if len(header) == 2:
                 if header[0].lower() == 'id' and header[1].lower() == 'text':
                     text_rows = [row[1] for row in csv_file_reader]
-                    write_csv(input_file_no_ext, csv_delimiter, text_rows)
+                    write_csv(input_csv_no_ext, csv_delimiter, text_rows)
+                    logging.info("End formatting csv files")
                 else:
-                    print("Wrong header name for csv file") 
+                    logging.error("Wrong header name in {}".format(input_csv))
             elif len(header) == 1:
                 if(header[0].lower() == 'text'):
                     text_rows = [row[0] for row in csv_file_reader]
-                    write_csv(input_file_no_ext, csv_delimiter, text_rows)
+                    write_csv(input_csv_no_ext, csv_delimiter, text_rows)
+                    logging.info("End formatting csv files")
+                else:
+                    logging.error("Wrong header name in {}".format(input_csv))
             elif len(header) == 0:
-                print("Empty csv file.")
+                logging.error("{} is empty.".format(input_csv))
+                sys.exit(1)
             else:
-                print("Too many header inside csv file")
+                logging.error("Too many header in {}".format(input_csv))
+                sys.exit(1)
         csv_file.close()
     except OSError as e:
-        print(e)
+        logging.error(e)
     
 if __name__ == '__main__':
     main()
