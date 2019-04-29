@@ -81,7 +81,7 @@ else
 
     java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarInputFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeatures.csv -vd 600
 
-    python $SCRIPTDIR/classification.py -i $SCRIPTDIR/extractedFeatures.csv -i $inputFile -d $documents -m $model -c $chunkSize -j $jobsNumber -o $outputFile
+    python $SCRIPTDIR/classification_task.py -i $SCRIPTDIR/extractedFeatures.csv -i $inputFile -d $documents -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     
     rm $SCRIPTDIR/extractedFeatures.csv
     rm $jarInputFile
