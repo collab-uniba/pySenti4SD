@@ -8,7 +8,10 @@ class CsvFormatter():
     def __init__(self, header_list, header = False):
         self.header_list = header_list
         self.header = header
-    
+
+    def __clean_row(self, row):
+        return row.replace('\n', '')
+  
     def get_rows(self, input_csv):
         with open(input_csv, 'r+', newline = '') as csv_file:
             header_list_copy = self.header_list.copy()
@@ -29,7 +32,7 @@ class CsvFormatter():
                     for i in range(0, len(header)):
                         if header[i].lower().strip() == header_list_copy[0].lower().strip():
                             print(header_list_copy[0].lower().strip())
-                            rows.update({header_list_copy[0]: [row[i] for row in csv_file_reader]})
+                            rows.update({header_list_copy[0]: [self.__clean_row(row[i]) for row in csv_file_reader]})
                             count += 1
                             break
                     header_list_copy.pop(0)

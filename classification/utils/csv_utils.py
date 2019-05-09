@@ -39,8 +39,8 @@ class CsvUtils(object):
         return csv_delimiter
 
     @staticmethod
-    def write_to_csv(data, output_csv, csv_delimiter, print_header = False):
-        with open(output_csv, 'w+', newline = '') as csv_file:
+    def write_to_csv(data, output_csv, csv_delimiter, print_header = False, mode = 'w+'):
+        with open(output_csv, mode, newline = '') as csv_file:
             csv_file_writer = csv.writer(csv_file, delimiter = csv_delimiter)
             if print_header == True:
                 header = data.keys()
