@@ -1,6 +1,7 @@
 import logging
 import argparse
 import pickle
+import sys
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -8,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report
 
 import scipy
-from liblinear.liblinearutil import *
+from liblinearutil import *
 
 from utils.csv_utils import CsvUtils
 
@@ -33,8 +34,8 @@ def main():
                         help = 'number of jobs',
                         type = int,
                         default = 1)
-    parser.add_argument('-o', 
-                        '--output',
+    parser.add_argument('-m', 
+                        '--model',
                         help = 'model file name',
                         type = str,
                         default = 'Senti4SD')
@@ -43,13 +44,9 @@ def main():
     seed = np.random.seed(42)
     
     if len(args.input) == 1:
-#        #split the dataset in train and test se
-#        #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=args.size, shuffle = False)
         try:
             logging.info("Start reading dataset in chunk...")
             X, y = CsvUtils.from_csv(args.input[0], args.chunk_size)
-            print(X.shape)
-            print(y.shape)
             logging.info("End reading dataset in chunk...")
         except OSError as e:
             print(e)
@@ -73,12 +70,6 @@ def main():
     
     else:
         print("Too many input arguments.")
-    
-        
-        #X_train = scipy.sparse.csr_matrix(X_train)
-        #y_train = scipy.asarray(y_train)
-        #print(X_train)
-        #prob = problem(y_train, x_train)
 
     logging.info("Start encoding training set labels..")
     le = LabelEncoder()
@@ -91,7 +82,6 @@ def main():
 
     S_VALUE = [0, 1, 2, 3, 4, 5, 6, 7]
     C_VALUE = [0.01, 0.05, 0.10, 0.20, 0.25, 0.50, 1, 2, 4, 8]
-    #C_VALUE = np.arange(0.05, 8, 0.05)
 
     best_s_value = 0
     best_c_value = 0
@@ -99,11 +89,9 @@ def main():
 
     current_c_value = 0
     current_cv_accuracy = 0
-    #search best parameters
 
+    #search best parameters
     logging.info("Start parameter tuning...")
-        #for i in range(10):
-            #logging.info(f"Run {i}")
     for s_value in S_VALUE:
         for c_value in C_VALUE:
             parameters = "-s {} -c {} -v 10 -B 1 -e 0.00001 -q".format(s_value, c_value)
@@ -157,7 +145,7 @@ def main():
 
     logging.info(classification_report(y_test, p_label))
 
-    save_model('./{}.model'.format(args.output), m)
+    save_model('./{}.model'.format(args.model), m)
     filehandler = open('./{}.label'.format("Senti4SD_label"), 'wb')
     pickle.dump(le, filehandler)
     

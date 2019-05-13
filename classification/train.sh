@@ -4,14 +4,14 @@ SCRIPTDIR=$(dirname "$0")
 
 chunkSize=200
 jobsNumber=1
-outputFile="$SCRIPTDIR/Senti4SD_model"
+modelFile="$SCRIPTDIR/Senti4SD"
 
 help(){
-    echo "Usage: classificationTask.sh -i input.csv [-d documents] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
+    echo "Usage: classificationTask.sh -i input.csv [-d documents] [-m model] [-c chunk_size] [-j jobs_number] [-o Senti4SD.model]"
     echo "-i train and test data for model training and evaluation. If only train is passed the script split the data in 70% train and 30% test [required]"
-    echo "-c chunk size [optional] [defaul = 500]"
-    echo "-j number of jobs for parallelism [optional] [default = 1]"
-    echo "-o output file with trained model [optional] [default = Senti4SD_model.clf]"
+    echo "-c chunk size [optional] [defaul = 200]"
+    echo "-j number of jobs for parallelism. In case of '-1' value it will use all available cores. [default = -1]"
+    echo "-o output file with trained model [default = Senti4SD.model]"
     exit 1
 }
 
@@ -35,8 +35,8 @@ while getopts ":h:i:d:m:c:j:o:" OPTIONS; do
         j)
           jobsNumber=$OPTARG
           ;;
-        o)
-          outputFile="$SCRIPTDIR/$OPTARG"
+        m)
+          modelFile="$SCRIPTDIR/$OPTARG"
           ;;
         \?)
           echo -e \\n"Option $OPTARG not allowed."
@@ -80,7 +80,7 @@ if [ $INPUTFILESLENGTH -eq 1 ]; then
 
   java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarInputFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeatures.csv -vd 600 -L
 
-  python $SCRIPTDIR/train.py -i $SCRIPTDIR/extractedFeatures.csv -c $chunkSize -j $jobsNumber -o $outputFile
+  python $SCRIPTDIR/train.py -i $SCRIPTDIR/extractedFeatures.csv -c $chunkSize -j $jobsNumber -m $modelFile
     
   rm $SCRIPTDIR/extractedFeatures.csv
   rm $jarInputFile
@@ -120,7 +120,7 @@ else
   java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarTrainFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeaturesTrain.csv -vd 600 -L
   java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarTestFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeaturesTest.csv -vd 600 -L
 
-  python $SCRIPTDIR/train.py -i $SCRIPTDIR/extractedFeaturesTrain.csv -i $SCRIPTDIR/extractedFeaturesTest.csv -c $chunkSize -j $jobsNumber -o $outputFile
+  python $SCRIPTDIR/train.py -i $SCRIPTDIR/extractedFeaturesTrain.csv -i $SCRIPTDIR/extractedFeaturesTest.csv -c $chunkSize -j $jobsNumber -m $modelFile
     
   rm $SCRIPTDIR/extractedFeaturesTrain.csv
   rm $SCRIPTDIR/extractedFeaturesTest.csv

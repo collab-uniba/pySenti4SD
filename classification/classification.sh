@@ -12,11 +12,11 @@ outputFile="$SCRIPTDIR/predictions.csv"
 help(){
     echo "Usage: classificationTask.sh -i input.csv [-d documents] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
     echo "-i input file to classify [required]"
-    echo "-d input file to classify [required]"
-    echo "-m trained model [optional] [default = Senti4SD_model]"
-    echo "-c chunk size [optional] [defaul = 500]"
-    echo "-j number of jobs for parallelism [optional] [default = 1]"
-    echo "-o output file with predicted label [optional] [default = predictions.csv]"
+    echo "-d true to print document in predictions file, false otherwise [default = false]"
+    echo "-m prediction model [default = Senti4SD]"
+    echo "-c chunk size [default = 200]"
+    echo "-j number of jobs for parallelism. In case of '-1' value it will use all available cores [default = -1]"
+    echo "-o output file with predicted label [default = predictions.csv]"
     exit 1
 }
 

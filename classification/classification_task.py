@@ -28,8 +28,8 @@ def main():
                         type = str,
                         default = "no")
     parser.add_argument('-m',
-                        '--trained-model',
-                        help = 'trained model (default = Senti4SD.model)',
+                        '--model',
+                        help = 'prediction model (default = Senti4SD.model)',
                         type = str,
                         default = "Senti4SD.model")
     parser.add_argument('-c',
@@ -50,7 +50,6 @@ def main():
     args = parser.parse_args()
 
     #TODO check missing file
-    model = "Senti4SD.model"
     filehandler = open("Senti4SD_label.label", "rb")
     le = pickle.load(filehandler)
 
@@ -69,7 +68,7 @@ def main():
     try:
         CsvUtils.check_csv(jar_csv)
         CsvUtils.check_csv(input_csv)
-        classification = Classification(model, le)
+        classification = Classification(args.model, le)
         with open(input_csv, 'r+', newline = '') as csv_file:
             text = True if args.documents == "yes" else False
             logging.info("Starting classification task")
