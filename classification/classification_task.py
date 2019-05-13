@@ -3,9 +3,14 @@ import argparse
 import pickle
 import logging
 import csv
+import os
+
+import numpy as np
+import pandas as pd
 
 from classification import Classification
 from utils.csv_utils import CsvUtils
+
 
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level = logging.INFO)
 
@@ -24,9 +29,9 @@ def main():
                         default = "no")
     parser.add_argument('-m',
                         '--trained-model',
-                        help = 'trained model (default = Senti4SD_model)',
+                        help = 'trained model (default = Senti4SD.model)',
                         type = str,
-                        default = "Senti4SD_model.clf")
+                        default = "Senti4SD.model")
     parser.add_argument('-c',
                         '--chunk-size',
                         help = 'chunk size  (--default = 1000)',
@@ -45,8 +50,9 @@ def main():
     args = parser.parse_args()
 
     #TODO check missing file
-    filehandler = open(args.trained_model, "rb")
-    model = pickle.load(filehandler)
+    model = "Senti4SD.model"
+    filehandler = open("Senti4SD_label.label", "rb")
+    le = pickle.load(filehandler)
 
     #TODO Add again second input line
 
@@ -63,11 +69,11 @@ def main():
     try:
         CsvUtils.check_csv(jar_csv)
         CsvUtils.check_csv(input_csv)
-        classification = Classification(model)
+        classification = Classification(model, le)
         with open(input_csv, 'r+', newline = '') as csv_file:
             text = True if args.documents == "yes" else False
             logging.info("Starting classification task")
-            classification.create_split_and_predict(jar_csv, model, args.chunk_size, args.number_of_jobs, args.output)
+            classification.predict(jar_csv, args.chunk_size, args.output)
             logging.info("Ending classification task")
             logging.info("Starting ordering prediction csv")
             CsvUtils.order_csv(args.output, 'ID')

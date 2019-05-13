@@ -1,7 +1,9 @@
 import csv
 import os
+from multiprocessing import Pool
 
 import pandas as pd
+import numpy as np
 
 class CsvUtils(object):
 
@@ -36,7 +38,61 @@ class CsvUtils(object):
             except csv.Error:
                 csv_delimiter = ';'
         csv_file.close()
+        print("Delimiter {}".format(csv_delimiter))
         return csv_delimiter
+
+    @staticmethod
+    def convert_lines(rows):
+        X = np.array([])
+        y = np.array([])
+        first = True
+        for i in range(0, len(rows)):
+            values = rows[i].split(',')
+            splitted_row_features = [float(value) for value in values[1:-2]]
+            splitted_row_label = values[-1]
+            if first:
+                X = np.array(splitted_row_features)
+                y = np.array(splitted_row_label)
+                first = False
+            else:
+                X = np.append(X, np.array(splitted_row_features))
+                y = np.append(y, np.array(splitted_row_label))
+        return X.reshape((i+1, len(splitted_row_features))), y
+
+    @staticmethod
+    def from_csv(csv_file, chunk_size):
+        stop = False
+        rows = []
+        print(os.cpu_count())
+        with open(csv_file, 'r+') as csv:
+            next(csv)
+            while not stop:
+                read_rows = []
+                try:
+                    for i in range(os.cpu_count()):
+                        temp_rows = []
+                        for j in range (chunk_size):
+                            temp_rows.append(next(csv))
+                        read_rows.append(temp_rows)
+                except StopIteration:
+                    stop = True
+                    read_rows.append(temp_rows)
+                finally:
+                    with Pool(os.cpu_count()) as p:
+                        results = p.map(CsvUtils.convert_lines, read_rows)
+                    for result in results:
+                        rows.append(result)
+        csv.close()
+        first = True
+        for row in rows:
+            if first:
+                X = row[0]
+                y = row[1]
+                first = False
+            else:
+                X = np.concatenate((X, row[0]))
+                y = np.concatenate((y, row[1]))
+        return X, y
 
     @staticmethod
     def write_to_csv(data, output_csv, csv_delimiter, print_header = False, mode = 'w+'):
@@ -51,7 +107,7 @@ class CsvUtils(object):
 
     @staticmethod
     def order_csv(input_csv, column_name):
-        csv_delimiter = CsvUtils.find_csv_delimiter(input_csv)
-        temp = pd.read_csv(input_csv, delimiter = csv_delimiter)
+        #csv_delimiter = CsvUtils.find_csv_delimiter(input_csv)
+        temp = pd.read_csv(input_csv, delimiter = ',')
         temp = temp.sort_values(by=[column_name])
         temp.to_csv(input_csv, index = False)

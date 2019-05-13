@@ -65,7 +65,7 @@ if [ ! -f $inputFile ]; then
     exit 1
 else 
 
-    python $SCRIPTDIR/csv_processing.py -i $inputFile
+    python $SCRIPTDIR/csv_processing.py -i $inputFile -c text
 
     IFS='.' read -ra FILENAMESPLIT <<< "$inputFile"
     jarInputFile="${FILENAMESPLIT[0]}_jar.csv"
@@ -83,7 +83,7 @@ else
 
     python $SCRIPTDIR/classification_task.py -i $SCRIPTDIR/extractedFeatures.csv -i $inputFile -d $documents -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     
-    rm $SCRIPTDIR/extractedFeatures.csv
+    #rm $SCRIPTDIR/extractedFeatures.csv
     rm $jarInputFile
 
 fi

@@ -8,17 +8,13 @@ class CsvFormatter():
     def __init__(self, header_list, header = False):
         self.header_list = header_list
         self.header = header
-
-    def __clean_row(self, row):
-        return row.replace('\n', '')
-  
+    
     def get_rows(self, input_csv):
         with open(input_csv, 'r+', newline = '') as csv_file:
             header_list_copy = self.header_list.copy()
             #TODO Find better way to handle csv delimiter
             #self.csv_delimiter = CsvUtils.find_csv_delimiter(input_csv)
             self.csv_delimiter = ';'
-            print(self.csv_delimiter)
             csv_file.seek(0)
             csv_file_reader =  csv.reader(csv_file, delimiter = self.csv_delimiter)
             header = next(csv_file_reader)
@@ -31,8 +27,7 @@ class CsvFormatter():
                 while len(header_list_copy) != 0:
                     for i in range(0, len(header)):
                         if header[i].lower().strip() == header_list_copy[0].lower().strip():
-                            print(header_list_copy[0].lower().strip())
-                            rows.update({header_list_copy[0]: [self.__clean_row(row[i]) for row in csv_file_reader]})
+                            rows.update({header_list_copy[0]: [row[i] for row in csv_file_reader]})
                             count += 1
                             break
                     header_list_copy.pop(0)

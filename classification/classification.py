@@ -1,17 +1,23 @@
 import os
 import csv
 import glob
+from multiprocessing import Pool
+from collections import OrderedDict
 
+import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
 
 from utils.csv_utils import CsvUtils
 from utils.csv_formatter import CsvFormatter
 
+from liblinearutil import *
+
 class Classification():
 
-    def __init__(self, model):
+    def __init__(self, model, label_encoder):
         self.model = model
+        self.label_encoder = label_encoder
 
     def __create_classification_file(self, pred_csv):
         with open(pred_csv, 'w+') as prediction:
@@ -19,67 +25,57 @@ class Classification():
         prediction.close()
 
     def __clean_id(self, id):
-        temp = id.split(",")[0]
-        temp = temp.replace("t", "")
+        temp = id.split(',')[0]
+        temp = temp.replace('t', "")
         return int(temp)
 
-    def __write_chunk(self, chunk_name, header, lines):
-        with open(chunk_name, 'w+') as jar_csv_chunk:
-            jar_csv_chunk.write(header)
-            jar_csv_chunk.writelines(line for line in lines)
-        jar_csv_chunk.close()
-
-    def __classification(self, jar_csv_chunk, pred_file):
-        chunk = pd.read_csv(jar_csv_chunk, delimiter = ',')
-        chunk.dropna(how="any")
-        pred = self.model.predict(chunk.iloc[:, 1:].values)
-        row_number = [self.__clean_id(id) for id in chunk['id'].values]
-        row_number = [id+1 for id in row_number]
-        pred_df = pd.DataFrame({'id': row_number, 'predicted': pred})
-        pred_df.to_csv(pred_file, sep = ',', index = False, header = False, mode = 'a')
+    def __convert_lines_and_predict(self, rows, pred_file):
+        X = np.array([])
+        splitted_rows_id = []
+        first = True
+        model = load_model(self.model)
+        for i in range(0, len(rows)):
+            values = rows[i].split(',')
+            splitted_rows_id.append(values[0])
+            splitted_row_features = [float(value) for value in values[1:]]
+            if first:
+                X = np.array(splitted_row_features)
+                first = False
+            else:
+                X = np.append(X, np.array(splitted_row_features))
+        X = X.reshape((i+1, len(splitted_row_features)))
+        y_pred, y_acc, y_val = predict([], X, model)
+        y_pred = [int(label) for label in y_pred]
+        y_pred = self.label_encoder.inverse_transform(y_pred)
+        y_pred = [pred.replace('\n', "") for pred in y_pred]
+        dataframe = OrderedDict()
+        dataframe.update({'id': [(self.__clean_id(row_id) + 1) for row_id in splitted_rows_id]})
+        dataframe.update({'predicted' : y_pred})
+        CsvUtils.write_to_csv(dataframe, pred_file, ',', False, 'a+')
     
-
-    def create_split_and_predict(self, jar_csv, model, chunk_size, number_of_split, pred_file):
-        if not os.path.exists('temp_split'):
-            os.mkdir('temp_split')
+    def predict(self, csv_file, chunk_size, pred_file):
         self.__create_classification_file(pred_file)
-        lines = []
-        with open(jar_csv, 'r') as csv_file:
-            stop = False
-            start_chunk = 0
-            stop_chunk = chunk_size
-            count = 0
-            try:
-                header = next(csv_file)
-                while not stop:
-                    while count < number_of_split:
-                        chunk_name = './temp_split/split-{}.csv'.format(count)
-                        try: 
-                            while start_chunk < stop_chunk:
-                                lines.append(next(csv_file))
-                                start_chunk += 1
-                            self.__write_chunk(chunk_name, header, lines)
-                        except StopIteration:
-                            stop = True
-                            self.__write_chunk(chunk_name, header, lines)
-                            csv_file.close()
-                            count = number_of_split
-                        else:
-                            lines = []
-                            start_chunk = stop_chunk
-                            stop_chunk = stop_chunk + chunk_size
-                            count += 1
-                    count = 0
-                    csv_files = glob.glob('./temp_split/*.csv')
-                    Parallel(n_jobs = number_of_split, verbose = 1)(delayed(self.__classification) (csv, pred_file) for csv in csv_files)
-                    for csv in csv_files:
-                        os.remove(csv)
-                os.rmdir('temp_split')
-            except StopIteration:
-                print('Empty file.')
+        stop = False
+        print(os.cpu_count())
+        with open(csv_file, 'r+') as csv:
+            next(csv)
+            while not stop:
+                read_rows = []
+                try:
+                    for i in range(os.cpu_count()):
+                        temp_rows = []
+                        for j in range (chunk_size):
+                            temp_rows.append(next(csv))
+                        read_rows.append(temp_rows)
+                except StopIteration:
+                    stop = True
+                    read_rows.append(temp_rows)
+                finally:
+                    Parallel(n_jobs = -1)(delayed(self.__convert_lines_and_predict)(rows, pred_file) for rows in read_rows)
+        csv.close()
 
     def write_id_and_text(self, input_csv, pred_csv, text = False):
-        dataframe = {}
+        dataframe = OrderedDict()
         try:
             csv_fomatter = CsvFormatter(['id'])
             dataframe.update(csv_fomatter.get_rows(input_csv))
