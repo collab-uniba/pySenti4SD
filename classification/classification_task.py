@@ -1,15 +1,11 @@
 import sys
 import argparse
-import pickle
 import logging
 import csv
-import os
-
-import numpy as np
-import pandas as pd
 
 from classification import Classification
 from utils.csv_utils import CsvUtils
+from utils.core_utils import CoreUtils
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level = logging.INFO)
@@ -43,7 +39,7 @@ def main():
                         type = int,
                         default = 1000)
     parser.add_argument('-j',
-                        '--number-of-jobs',
+                        '--jobs-number',
                         help = 'number of jobs for parallelism  (default = 1)',
                         type = int,
                         default = 1)
@@ -65,7 +61,7 @@ def main():
     elif len(args.input) < 2:
         print("Two input file are required. [jar generated csv][input csv]")
         sys.exit(1)
-
+        
     try:
         CsvUtils.check_csv(jar_csv)
         CsvUtils.check_csv(input_csv)
@@ -73,7 +69,7 @@ def main():
         with open(input_csv, 'r+', newline = '') as csv_file:
             text = True if args.text.lower() == "true" else False
             logging.info("Starting classification task")
-            classification.predict(jar_csv, args.chunk_size, args.output)
+            classification.predict(jar_csv, args.chunk_size, CoreUtils.check_jobs_number(args.jobs_number), args.output)
             logging.info("Ending classification task")
             logging.info("Starting ordering prediction csv")
             CsvUtils.order_csv(args.output, 'ID')
@@ -93,3 +89,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

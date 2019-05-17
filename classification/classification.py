@@ -53,10 +53,10 @@ class Classification():
         dataframe.update({'predicted' : y_pred})
         CsvUtils.write_to_csv(dataframe, pred_file, ',', False, 'a+')
     
-    def predict(self, csv_file, chunk_size, pred_file):
+    def predict(self, csv_file, chunk_size, jobs_number, pred_file):
         self.__create_classification_file(pred_file)
         stop = False
-        print(os.cpu_count())
+        print(jobs_number)
         label_encoder = LabelEncoder()
         label_encoder.fit(['positive', 'negative', 'neutral'])
         with open(csv_file, 'r+') as csv:
@@ -73,7 +73,7 @@ class Classification():
                     stop = True
                     read_rows.append(temp_rows)
                 finally:
-                    Parallel(n_jobs = -1)(delayed(self.__convert_lines_and_predict)(rows, label_encoder, pred_file) for rows in read_rows)
+                    Parallel(n_jobs = jobs_number)(delayed(self.__convert_lines_and_predict)(rows, label_encoder, pred_file) for rows in read_rows)
         csv.close()
 
     def write_id_and_text(self, input_csv, csv_delimiter, pred_csv, text = False):

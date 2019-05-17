@@ -30,18 +30,6 @@ class CsvUtils(object):
             raise OSError("WRONG FILE EXTENSION : {} wasn't a csv file.".format(csv_path))
 
     @staticmethod
-    def find_csv_delimiter(input_csv):
-        csv_delimiter = ';'
-        with open(input_csv, 'r+', newline = '') as csv_file:
-            try: 
-                csv_delimiter = csv.Sniffer().sniff(csv_file.read(2048)).delimiter
-            except csv.Error:
-                csv_delimiter = ';'
-        csv_file.close()
-        print("Delimiter {}".format(csv_delimiter))
-        return csv_delimiter
-
-    @staticmethod
     def convert_lines(rows):
         X = np.array([])
         y = np.array([])
