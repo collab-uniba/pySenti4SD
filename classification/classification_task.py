@@ -23,10 +23,15 @@ def main():
                        action = 'append',
                        required = True)
     parser.add_argument('-d',
-                        '--documents',
-                        help = 'write starting documents in prediction csv file (defualt = no)',
+                       '--delimiter',
+                       help = 'csv delimiter, use c for comma and sc for semicolon',
+                       type = str,
+                       default = 'c')
+    parser.add_argument('-t',
+                        '--text',
+                        help = 'true for write input documents in prediction csv file, otherwise false. (defualt = false)',
                         type = str,
-                        default = "no")
+                        default = "false")
     parser.add_argument('-m',
                         '--model',
                         help = 'prediction model (default = Senti4SD.model)',
@@ -70,7 +75,7 @@ def main():
         CsvUtils.check_csv(input_csv)
         classification = Classification(args.model, le)
         with open(input_csv, 'r+', newline = '') as csv_file:
-            text = True if args.documents == "yes" else False
+            text = True if args.text.lower() == "true" else False
             logging.info("Starting classification task")
             classification.predict(jar_csv, args.chunk_size, args.output)
             logging.info("Ending classification task")
@@ -78,7 +83,11 @@ def main():
             CsvUtils.order_csv(args.output, 'ID')
             logging.info("Ending ordering prediction csv")
             logging.info("Starting rewriting prediction csv")
-            classification.write_id_and_text(input_csv, args.output, text)
+            #TODO handle wrong delimiter
+            if args.delimiter.lower() == 'c':
+                classification.write_id_and_text(input_csv, ',', args.output, text)
+            elif args.delimiter.lower() == 'sc':
+                classification.write_id_and_text(input_csv, ';', args.output, text)
             logging.info("Ending rewriting prediction csv")
         csv_file.close()
     except OSError as e:

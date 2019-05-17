@@ -15,6 +15,11 @@ def main():
                        help = "path to csv file",
                        type = str,
                        required = True)
+    parser.add_argument('-d',
+                       '--delimiter',
+                       help = 'csv delimiter, use c for comma and sc for semicolon',
+                       type = str,
+                       default = 'c')
     parser.add_argument('-c',
                        '--columns',
                        help = "column or columns to extract from csv [default = 'text']",
@@ -29,7 +34,13 @@ def main():
         CsvUtils.check_csv(input_csv)
         logging.info("Start formatting csv file")
         try:
-            csvFormatter = CsvFormatter(args.columns)
+            if(args.delimiter == 'c'):
+                csvFormatter = CsvFormatter(args.columns, ',')
+            elif(args.delimiter == 'sc'):
+                csvFormatter = CsvFormatter(args.columns, ';')
+            else:
+                logging.error('Wrong csv delimiter. Use "c" for comma and "sc" for semicolon.')
+                sys.exit(1)
             data = csvFormatter.get_rows(input_csv)
             csvFormatter.write(data, output_csv)
         except IOError as e:

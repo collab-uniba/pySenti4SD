@@ -3,16 +3,18 @@
 SCRIPTDIR=$(dirname "$0")
 
 inputFile=""
-documents="no"
+csvDelimiter='c'
+documents="false"
 model="$SCRIPTDIR/Senti4SD_model.clf"
 chunkSize=200
 jobsNumber=1
 outputFile="$SCRIPTDIR/predictions.csv"
 
 help(){
-    echo "Usage: classificationTask.sh -i input.csv [-d documents] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
+    echo "Usage: classificationTask.sh -i input.csv [-d delimiter] [-t documents] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
     echo "-i input file to classify [required]"
-    echo "-d true to print document in predictions file, false otherwise [default = false]"
+    echo '-d delimiter used in csv file, "c" for comma or "sc" for semicolon'
+    echo "-t true to print document in predictions file, false otherwise [default = false]"
     echo "-m prediction model [default = Senti4SD]"
     echo "-c chunk size [default = 200]"
     echo "-j number of jobs for parallelism. In case of '-1' value it will use all available cores [default = -1]"
@@ -35,6 +37,9 @@ while getopts ":h:i:d:m:c:j:o:" OPTIONS; do
           inputFile=$OPTARG
           ;;
         d)
+          csvDelimiter="$OPTARG"
+          ;;
+        t)
           documents="$OPTARG"
           ;;
         m)
@@ -65,7 +70,7 @@ if [ ! -f $inputFile ]; then
     exit 1
 else 
 
-    python $SCRIPTDIR/csv_processing.py -i $inputFile -c text
+    python $SCRIPTDIR/csv_processing.py -i $inputFile -d $csvDelimiter -c text
 
     IFS='.' read -ra FILENAMESPLIT <<< "$inputFile"
     jarInputFile="${FILENAMESPLIT[0]}_jar.csv"
@@ -81,7 +86,7 @@ else
 
     java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarInputFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeatures.csv -vd 600
 
-    python $SCRIPTDIR/classification_task.py -i $SCRIPTDIR/extractedFeatures.csv -i $inputFile -d $documents -m $model -c $chunkSize -j $jobsNumber -o $outputFile
+    python $SCRIPTDIR/classification_task.py -i $SCRIPTDIR/extractedFeatures.csv -i $inputFile -d $csvDelimiter -t $documents -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     
     #rm $SCRIPTDIR/extractedFeatures.csv
     rm $jarInputFile

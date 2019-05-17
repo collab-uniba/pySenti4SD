@@ -2,6 +2,7 @@
 
 SCRIPTDIR=$(dirname "$0")
 
+csvDelimiter='c'
 chunkSize=200
 jobsNumber=1
 modelFile="$SCRIPTDIR/Senti4SD"
@@ -9,9 +10,10 @@ modelFile="$SCRIPTDIR/Senti4SD"
 help(){
     echo "Usage: classificationTask.sh -i input.csv [-d documents] [-m model] [-c chunk_size] [-j jobs_number] [-o Senti4SD.model]"
     echo "-i train and test data for model training and evaluation. If only train is passed the script split the data in 70% train and 30% test [required]"
-    echo "-c chunk size [optional] [defaul = 200]"
-    echo "-j number of jobs for parallelism. In case of '-1' value it will use all available cores. [default = -1]"
-    echo "-o output file with trained model [default = Senti4SD.model]"
+    echo '-d delimiter used in csv file, "c" for comma or "sc" for semicolon'
+    echo "-c chunk size [optional] [default = 200]"
+    echo "-j number of jobs for parallelism. In case of '-1' value it will use all available cores. [optional] [default = -1]"
+    echo "-o output file with trained model [optional][default = Senti4SD.model]"
     exit 1
 }
 
@@ -28,6 +30,9 @@ while getopts ":h:i:d:m:c:j:o:" OPTIONS; do
           ;;
         i)
           inputFiles+=($OPTARG)
+          ;;
+        d)
+          csvDelimiter=$OPTARG
           ;;
         c)
           chunkSize=$OPTARG
@@ -62,7 +67,7 @@ if [ $INPUTFILESLENGTH -eq 1 ]; then
   echo "test"
   echo $inputFile
 
-  python $SCRIPTDIR/csv_processing.py -i $inputFile -c text -c polarity
+  python $SCRIPTDIR/csv_processing.py -i $inputFile -d $csvDelimiter -c text -c polarity
 
   IFS='.' read -ra FILENAMESPLIT <<< "$inputFile"
   jarInputFile="${FILENAMESPLIT[0]}_jar.csv"
@@ -96,8 +101,8 @@ else
   trainFile=${inputFiles[0]}
   testFile=${inputFiles[1]} 
 
-  python $SCRIPTDIR/csv_processing.py -i $trainFile -c text -c polarity
-  python $SCRIPTDIR/csv_processing.py -i $testFile -c text -c polarity
+  python $SCRIPTDIR/csv_processing.py -i $trainFile -d $csvDelimiter -c text -c polarity
+  python $SCRIPTDIR/csv_processing.py -i $testFile -d $csvDelimiter -c text -c polarity
 
   IFS='.' read -ra FILENAMESPLIT <<< "$trainFile"
   jarTrainFile="${FILENAMESPLIT[0]}_jar.csv"

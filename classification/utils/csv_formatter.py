@@ -5,16 +5,14 @@ from utils.csv_utils import CsvUtils
 
 class CsvFormatter():
 
-    def __init__(self, header_list, header = False):
+    def __init__(self, header_list, csv_delimiter, header = False):
         self.header_list = header_list
         self.header = header
+        self.csv_delimiter = csv_delimiter
     
     def get_rows(self, input_csv):
         with open(input_csv, 'r+', newline = '') as csv_file:
             header_list_copy = self.header_list.copy()
-            #TODO Find better way to handle csv delimiter
-            #self.csv_delimiter = CsvUtils.find_csv_delimiter(input_csv)
-            self.csv_delimiter = ';'
             csv_file.seek(0)
             csv_file_reader =  csv.reader(csv_file, delimiter = self.csv_delimiter)
             header = next(csv_file_reader)
