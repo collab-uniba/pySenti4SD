@@ -135,9 +135,8 @@ def main():
         
     p_label, p_acc, p_val = predict(y_test, X_test, m)
 
-    print(p_label[0])
+    #Convert predicted value from float to int
     p_label = [int(label) for label in p_label]
-    print(p_label[0])
 
     y_test = le.inverse_transform(y_test)
     p_label = le.inverse_transform(p_label)
@@ -146,8 +145,6 @@ def main():
     logging.info(classification_report(y_test, p_label))
 
     save_model('./{}.model'.format(args.model), m)
-    filehandler = open('./{}.label'.format("Senti4SD_label"), 'wb')
-    pickle.dump(le, filehandler)
     
    
 if __name__ == '__main__':

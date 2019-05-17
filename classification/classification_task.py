@@ -54,12 +54,8 @@ def main():
                         default = 'predictions.csv')
     args = parser.parse_args()
 
-    #TODO check missing file
-    filehandler = open("Senti4SD_label.label", "rb")
-    le = pickle.load(filehandler)
 
     #TODO Add again second input line
-
     if len(args.input) == 2:
         jar_csv = args.input[0]
         input_csv = args.input[1]
@@ -73,7 +69,7 @@ def main():
     try:
         CsvUtils.check_csv(jar_csv)
         CsvUtils.check_csv(input_csv)
-        classification = Classification(args.model, le)
+        classification = Classification(args.model)
         with open(input_csv, 'r+', newline = '') as csv_file:
             text = True if args.text.lower() == "true" else False
             logging.info("Starting classification task")
