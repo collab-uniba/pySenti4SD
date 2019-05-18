@@ -1,6 +1,5 @@
 import logging
 import argparse
-import pickle
 import sys
 
 import numpy as np
@@ -12,9 +11,11 @@ import scipy
 from liblinearutil import *
 
 from utils.csv_utils import CsvUtils
+from utils.core_utils import CoreUtils
 
 
 logging.basicConfig(level = logging.INFO, format = "[%(levelname)s] %(asctime)s - %(message)s")
+    
 
 def main():
     parser = argparse.ArgumentParser(description = "Hyperparameter tuning")
@@ -30,7 +31,7 @@ def main():
                         type = int,
                         default = 200)
     parser.add_argument('-j', 
-                        '--jobs',
+                        '--jobs-number',
                         help = 'number of jobs',
                         type = int,
                         default = 1)
@@ -77,49 +78,59 @@ def main():
     y_train = le.transform(y_train)
     logging.info("End econding training set labels..")
 
-
-    prob = problem(y_train, scipy.sparse.csr_matrix(X_train))
-
-    S_VALUE = [0, 1, 2, 3, 4, 5, 6, 7]
-    C_VALUE = [0.01, 0.05, 0.10, 0.20, 0.25, 0.50, 1, 2, 4, 8]
-
-    best_s_value = 0
-    best_c_value = 0
-    best_cv_accuracy = 0
-
-    current_c_value = 0
-    current_cv_accuracy = 0
-
     #search best parameters
     logging.info("Start parameter tuning...")
-    for s_value in S_VALUE:
+    jobs_number = CoreUtils.check_jobs_number(args.jobs_number)
+
+    solvers = {
+        0: "L2-regularized logistic regression (primal)",
+		1: "L2-regularized L2-loss support vector classification (dual)",
+		2: "L2-regularized L2-loss support vector classification (primal)",
+		3: "L2-regularized L1-loss support vector classification (dual)",
+		4: "support vector classification by Crammer and Singer",
+		5: "L1-regularized L2-loss support vector classification",
+		6: "L1-regularized logistic regression",
+	    7: "L2-regularized logistic regression (dual)"
+    }
+
+    C_VALUE = [0.01, 0.05, 0.10, 0.20, 0.25, 0.50, 1, 2, 4, 8]
+
+    cv_accuracy = 0
+    best_cv_accuracy = 0
+    best_c_value = 0
+    best_s_value = 0
+
+    prob = problem(y_train, X_train)
+    for solver_value, solver_name in solvers.items():
+        print(f"Tuning solver {solver_name}")
         for c_value in C_VALUE:
-            parameters = "-s {} -c {} -v 10 -B 1 -e 0.00001 -q".format(s_value, c_value)
+            print(f"C value: {c_value}")
+            if solver_value == 4 or solver_value == 7:
+                parameters = "-s {} -c {} -v 10 -B 1 -q".format(solver_value, c_value)
+            else:
+                parameters = "-s {} -n {} -c {} -v 10 -B 1 -q".format(solver_value, jobs_number, c_value)
             param = parameter(parameters)
             cv_accuracy = train(prob, param)
-            if cv_accuracy > current_cv_accuracy:
-                current_cv_accuracy = cv_accuracy
-                current_c_value = c_value
             if cv_accuracy > best_cv_accuracy:
-                best_s_value = s_value
                 best_c_value = c_value
                 best_cv_accuracy = cv_accuracy
-        print(f"Solver {s_value}")
-        print(f"Best accuracy {current_cv_accuracy}")
-        print(f"Best C {current_c_value}")
-        current_c_value = 0
-        current_cv_accuracy = 0
+                best_s_value = solver_value 
+    #solver_results = Parallel(n_jobs = jobs_number)(delayed(search_best_parameter)(X_train, y_train, s_value, C_VALUE) for s_value in S_VALUE)
     logging.info("End parameter tuning...")
         
+    logging.info(f"Best solver: {solvers[best_s_value]}")
+    logging.info(f"Best C value: {best_c_value}")
+    logging.info(f"Best cv accuracy: {best_cv_accuracy}")
 
+    logging.info("Train model with selected solver and best C value...")
     #retrain the model
-    parameters = "-s {} -c {} -B 1".format(best_s_value, best_c_value)
+    if best_s_value == 4 or best_s_value == 7:
+        parameters = "-s {} -c {} -B 1".format(best_s_value, best_c_value)
+    else:
+        parameters = "-s {} -n {} -c {} -B 1 -q".format(best_s_value, jobs_number, best_c_value)
     param = parameter(parameters)
     m = train(prob, param)
-
-    print(best_s_value)
-    print(best_c_value)
-    print(best_cv_accuracy)
+    logging.info("End retraining model")
         
 
     del X_train, y_train
@@ -142,7 +153,8 @@ def main():
     p_label = le.inverse_transform(p_label)
     np.array(p_label)
 
-    logging.info(classification_report(y_test, p_label))
+    logging.info("Classification report on test set")
+    print(classification_report(y_test, p_label))
 
     save_model('./{}.model'.format(args.model), m)
     
