@@ -55,8 +55,8 @@ class Classification():
     
     def predict(self, csv_file, chunk_size, jobs_number, pred_file):
         self.__create_classification_file(pred_file)
+        chunk_size = int(chunk_size / jobs_number)
         stop = False
-        print(jobs_number)
         label_encoder = LabelEncoder()
         label_encoder.fit(['positive', 'negative', 'neutral'])
         with open(csv_file, 'r+') as csv:
@@ -64,7 +64,7 @@ class Classification():
             while not stop:
                 read_rows = []
                 try:
-                    for _ in range(os.cpu_count()):
+                    for _ in range(jobs_number):
                         temp_rows = []
                         for _ in range (chunk_size):
                             temp_rows.append(next(csv))

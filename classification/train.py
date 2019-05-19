@@ -27,9 +27,9 @@ def main():
                        required = True)
     parser.add_argument('-c',
                         '--chunk-size',
-                        help = 'chunk size  --default = 200',
+                        help = 'chunk size  --default = 1000',
                         type = int,
-                        default = 200)
+                        default = 1000)
     parser.add_argument('-j', 
                         '--jobs-number',
                         help = 'number of jobs',
@@ -43,11 +43,13 @@ def main():
     args = parser.parse_args()
 
     seed = np.random.seed(42)
+
+    jobs_number = CoreUtils.check_jobs_number(args.jobs_number)
     
     if len(args.input) == 1:
         try:
             logging.info("Start reading dataset in chunk...")
-            X, y = CsvUtils.from_csv(args.input[0], args.chunk_size)
+            X, y = CsvUtils.from_csv(args.input[0], args.chunk_size, jobs_number)
             logging.info("End reading dataset in chunk...")
         except OSError as e:
             print(e)
@@ -66,7 +68,7 @@ def main():
 
         #read the train set in chunk
         logging.info("Start reading training set in chunk...")
-        X_train, y_train = CsvUtils.from_csv(args.input[0], args.chunk_size)
+        X_train, y_train = CsvUtils.from_csv(args.input[0], args.chunk_size, jobs_number)
         logging.info("End reading training set in chunk...")
     
     else:
@@ -80,7 +82,6 @@ def main():
 
     #search best parameters
     logging.info("Start parameter tuning...")
-    jobs_number = CoreUtils.check_jobs_number(args.jobs_number)
 
     solvers = {
         0: "L2-regularized logistic regression (primal)",
@@ -137,7 +138,7 @@ def main():
         
     if len(args.input) == 2:   
         logging.info("Start reading test set in chunk...")
-        X_test, y_test = CsvUtils.from_csv(args.input[1], args.chunk_size)
+        X_test, y_test = CsvUtils.from_csv(args.input[1], args.chunk_size, jobs_number)
         logging.info("End reading test set in chunk...")
 
     logging.info("Start encoding training set labels..")

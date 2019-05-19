@@ -48,25 +48,25 @@ class CsvUtils(object):
         return X.reshape((i+1, len(splitted_row_features))), y
 
     @staticmethod
-    def from_csv(csv_file, chunk_size):
+    def from_csv(csv_file, chunk_size, jobs_number):
         stop = False
         rows = []
-        print(os.cpu_count())
+        chunk_size = int(chunk_size / jobs_number)
         with open(csv_file, 'r+') as csv:
             next(csv)
             while not stop:
                 read_rows = []
                 try:
-                    for i in range(os.cpu_count()):
+                    for _ in range(jobs_number):
                         temp_rows = []
-                        for j in range (chunk_size):
+                        for _ in range (chunk_size):
                             temp_rows.append(next(csv))
                         read_rows.append(temp_rows)
                 except StopIteration:
                     stop = True
                     read_rows.append(temp_rows)
                 finally:
-                    with Pool(os.cpu_count()) as p:
+                    with Pool(jobs_number) as p:
                         results = p.map(CsvUtils.convert_lines, read_rows)
                     for result in results:
                         rows.append(result)

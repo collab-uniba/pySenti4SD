@@ -3,7 +3,7 @@
 SCRIPTDIR=$(dirname "$0")
 
 csvDelimiter='c'
-chunkSize=200
+chunkSize=1000
 jobsNumber=1
 modelFile="$SCRIPTDIR/Senti4SD"
 
@@ -11,7 +11,7 @@ help(){
     echo "Usage: classificationTask.sh -i input.csv [-d documents] [-m model] [-c chunk_size] [-j jobs_number] [-o Senti4SD.model]"
     echo "-i train and test data for model training and evaluation. If only train is passed the script split the data in 70% train and 30% test [required]"
     echo '-d delimiter used in csv file, "c" for comma or "sc" for semicolon'
-    echo "-c chunk size [optional] [default = 200]"
+    echo "-c chunk size [optional] [default = 1000]"
     echo "-j number of jobs for parallelism. In case of '-1' value it will use all available cores. [optional] [default = -1]"
     echo "-o output file with trained model [optional][default = Senti4SD.model]"
     exit 1
