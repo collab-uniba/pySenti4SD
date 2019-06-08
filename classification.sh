@@ -5,7 +5,7 @@ SCRIPTDIR=$(dirname "$0")
 inputFile=""
 csvDelimiter='c'
 documents="false"
-model="$SCRIPTDIR/Senti4SD_model.clf"
+model="$SCRIPTDIR/Senti4SD.model"
 chunkSize=200
 jobsNumber=1
 outputFile="$SCRIPTDIR/predictions.csv"
@@ -70,7 +70,9 @@ if [ ! -f $inputFile ]; then
     exit 1
 else 
 
-    python $SCRIPTDIR/csv_processing.py -i $inputFile -d $csvDelimiter -c text
+    mkdir -p $SCRIPTDIR/temp_features;
+
+    python $SCRIPTDIR/python/csv_processing.py -i $inputFile -d $csvDelimiter -c text
 
     IFS='.' read -ra FILENAMESPLIT <<< "$inputFile"
     jarInputFile="${FILENAMESPLIT[0]}_jar.csv"
@@ -84,10 +86,11 @@ else
     #-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
     #-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
 
-    java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarInputFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeatures.csv -vd 600
+    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeatures.csv -vd 600
 
-    python $SCRIPTDIR/classification_task.py -i $SCRIPTDIR/extractedFeatures.csv -i $inputFile -d $csvDelimiter -t $documents -m $model -c $chunkSize -j $jobsNumber -o $outputFile
+    python $SCRIPTDIR/python/classification_task.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -i $inputFile -d $csvDelimiter -t $documents -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     
+    rm -rf $SCRIPTDIR/temp_features
     #rm $SCRIPTDIR/extractedFeatures.csv
     rm $jarInputFile
 

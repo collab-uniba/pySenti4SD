@@ -63,11 +63,11 @@ if [ $INPUTFILESLENGTH -gt 2 ]; then
 else
 if [ $INPUTFILESLENGTH -eq 1 ]; then
 
-  inputFile=$inputFiles
-  echo "test"
-  echo $inputFile
+  mkdir -p $SCRIPTDIR/temp_features;
 
-  python $SCRIPTDIR/csv_processing.py -i $inputFile -d $csvDelimiter -c text -c polarity
+  inputFile=$inputFiles
+
+  python $SCRIPTDIR/python/csv_processing.py -i $inputFile -d $csvDelimiter -c text -c polarity
 
   IFS='.' read -ra FILENAMESPLIT <<< "$inputFile"
   jarInputFile="${FILENAMESPLIT[0]}_jar.csv"
@@ -85,9 +85,9 @@ if [ $INPUTFILESLENGTH -eq 1 ]; then
 
   java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarInputFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeatures.csv -vd 600 -L
 
-  python $SCRIPTDIR/train.py -i $SCRIPTDIR/extractedFeatures.csv -c $chunkSize -j $jobsNumber -m $modelFile
+  python $SCRIPTDIR/python/train.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -c $chunkSize -j $jobsNumber -m $modelFile
     
-  rm $SCRIPTDIR/extractedFeatures.csv
+  rm -rf $SCRIPTDIR/temp_features 
   rm $jarInputFile
 else
 
@@ -98,11 +98,13 @@ else
     fi
   done
 
+  mkdir -p $SCRIPTDIR/temp_features;
+
   trainFile=${inputFiles[0]}
   testFile=${inputFiles[1]} 
 
-  python $SCRIPTDIR/csv_processing.py -i $trainFile -d $csvDelimiter -c text -c polarity
-  python $SCRIPTDIR/csv_processing.py -i $testFile -d $csvDelimiter -c text -c polarity
+  python $SCRIPTDIR/python/csv_processing.py -i $trainFile -d $csvDelimiter -c text -c polarity
+  python $SCRIPTDIR/python/csv_processing.py -i $testFile -d $csvDelimiter -c text -c polarity
 
   IFS='.' read -ra FILENAMESPLIT <<< "$trainFile"
   jarTrainFile="${FILENAMESPLIT[0]}_jar.csv"
@@ -122,13 +124,12 @@ else
     #-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
     #-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
 
-  java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarTrainFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeaturesTrain.csv -vd 600 -L
-  java -jar $SCRIPTDIR/Senti4SD-fast.jar -F A -i $jarTestFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeaturesTest.csv -vd 600 -L
+  java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarTrainFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeaturesTrain.csv -vd 600 -L
+  java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarTestFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeaturesTest.csv -vd 600 -L
 
-  python $SCRIPTDIR/train.py -i $SCRIPTDIR/extractedFeaturesTrain.csv -i $SCRIPTDIR/extractedFeaturesTest.csv -c $chunkSize -j $jobsNumber -m $modelFile
+  python $SCRIPTDIR/python/train.py -i $SCRIPTDIR/temp_features/extractedFeaturesTrain.csv -i $SCRIPTDIR/temp_features/extractedFeaturesTest.csv -c $chunkSize -j $jobsNumber -m $modelFile
     
-  rm $SCRIPTDIR/extractedFeaturesTrain.csv
-  rm $SCRIPTDIR/extractedFeaturesTest.csv
+  rm -rf $SCRIPTDIR/temp_features  
   rm $jarTrainFile
   rm $jarTestFile
 
