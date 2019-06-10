@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fd5dea99-bca6-44fe-9612-d363938e9340" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/python/core/tuning_parameter.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/core/tuning_parameter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python/core/utils/csv_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/core/utils/csv_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train.sh" afterDir="false" />
-    </list>
+    <list default="true" id="fd5dea99-bca6-44fe-9612-d363938e9340" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +34,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/python/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
+            <state relative-caret-position="-569">
               <caret line="61" column="68" selection-start-line="61" selection-start-column="68" selection-end-line="61" selection-end-column="68" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
@@ -200,6 +195,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -231,12 +227,12 @@
       <updated>1560153363066</updated>
       <workItem from="1560153368606" duration="28055000" />
       <workItem from="1560197182130" duration="1425000" />
-      <workItem from="1560198663261" duration="2385000" />
+      <workItem from="1560198663261" duration="3000000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="31865000" />
+    <option name="totallyTimeSpent" value="32480000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -249,7 +245,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19147758" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -378,7 +373,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/python/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
+        <state relative-caret-position="-569">
           <caret line="61" column="68" selection-start-line="61" selection-start-column="68" selection-end-line="61" selection-end-column="68" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
