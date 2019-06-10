@@ -30,7 +30,8 @@ def main():
                        required = True)
     args = parser.parse_args()
     input_csv = args.input
-    output_csv = "{}_jar.csv".format(input_csv.split('.')[0])
+    input_csv = Path(input_csv).resolve()
+    output_csv = "{}/{}_jar.csv".format(input_csv.parent, input_csv.name.split('.')[0])
     print(args.columns)
     try:
         CsvUtils.check_csv(input_csv)
