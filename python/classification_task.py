@@ -1,11 +1,16 @@
 import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'core'))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'core/utils'))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'core/liblinear_multicore'))
+
 import argparse
 import logging
 import csv
 
-from classification import Classification
-from utils.csv_utils import CsvUtils
-from utils.core_utils import CoreUtils
+from core.classification import Classification
+from core.utils.csv_utils import CsvUtils
+from core.utils.core_utils import CoreUtils
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level = logging.INFO)
