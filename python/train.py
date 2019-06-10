@@ -6,6 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'core/
 
 import logging
 import argparse
+from pathlib import Path
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -49,9 +50,19 @@ def main():
     jobs_number = CoreUtils.check_jobs_number(args.jobs_number)
     
     if len(args.input) == 1:
+
+        train_file_path = Path(args.input[0]).resolve()
+
+        # Check file existence in advance to avoid missing test set
+        try:
+            CsvUtils.check_csv(train_file_path)
+        except OSError as e:
+            print(e)
+            sys.exit(1)
+
         try:
             logging.info("Start reading dataset in chunk...")
-            X, y = CsvUtils.from_csv(args.input[0], args.chunk_size, jobs_number)
+            X, y = CsvUtils.from_csv(train_file_path, args.chunk_size, jobs_number)
             logging.info("End reading dataset in chunk...")
         except OSError as e:
             print(e)
@@ -59,21 +70,24 @@ def main():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.30, stratify = y, random_state = seed)
         del X, y
     elif len(args.input) == 2:
+
+        train_file_path = Path(args.input[0]).resolve()
+        test_file_path = Path(args.input[1]).resolve()
         
         #Check file existence in advance to avoid missing test set
         try:
-            CsvUtils.check_csv(args.input[0])
-            CsvUtils.check_csv(args.input[1])
+            CsvUtils.check_csv(train_file_path)
+            CsvUtils.check_csv(test_file_path)
         except OSError as e:
             print(e)
             sys.exit(1)
 
         #read the train set in chunk
         logging.info("Start reading training set in chunk...")
-        X_train, y_train = CsvUtils.from_csv(args.input[0], args.chunk_size, jobs_number)
+        X_train, y_train = CsvUtils.from_csv(train_file_path, args.chunk_size, jobs_number)
         logging.info("End reading training set in chunk...")
         logging.info("Start reading test set in chunk...")
-        X_test, y_test = CsvUtils.from_csv(args.input[1], args.chunk_size, jobs_number)
+        X_test, y_test = CsvUtils.from_csv(test_file_path, args.chunk_size, jobs_number)
         logging.info("End reading test set in chunk...")
     
     else:

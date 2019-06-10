@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'core/
 
 import argparse
 import logging
-import csv
+from pathlib import Path
 
 from core.classification import Classification
 from core.utils.csv_utils import CsvUtils
@@ -60,6 +60,8 @@ def main():
     if len(args.input) == 2:
         jar_csv = args.input[0]
         input_csv = args.input[1]
+        jar_csv = Path(jar_csv).resolve()
+        input_csv = Path(input_csv).resolve()
     elif len(args.input) > 2:
         logging.error("Too many input file. [jar generated csv][input csv]")
         sys.exit(1)
