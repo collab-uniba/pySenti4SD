@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import os, sys
-sys.path = [os.path.dirname(os.path.abspath(__file__))] + sys.path
-from liblinear.liblinear import *
-from liblinear.liblinear import __all__ as liblinear_all
-from liblinear.liblinear import scipy, sparse
-from liblinear.commonutil import *
-from liblinear.commonutil import __all__ as common_all
+sys.path.append(f"{os.path.dirname(os.path.abspath(__file__))}\liblinear_multi")
+from liblinear_multi.liblinear import *
+from liblinear_multi.liblinear import __all__ as liblinear_all
+from liblinear_multi.liblinear import scipy, sparse
+from liblinear_multi.commonutil import *
+from liblinear_multi.commonutil import __all__ as common_all
 from ctypes import c_double
 
 if sys.version_info[0] < 3:

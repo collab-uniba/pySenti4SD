@@ -5,7 +5,7 @@ from multiprocessing import Pool
 import pandas as pd
 import numpy as np
 
-class CsvUtils(object):
+class CsvUtils():
 
     @staticmethod
     def __check_file_existence(file_path):

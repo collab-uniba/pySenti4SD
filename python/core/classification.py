@@ -12,7 +12,7 @@ from sklearn.preprocessing import LabelEncoder
 from utils.csv_utils import CsvUtils
 from utils.csv_formatter import CsvFormatter
 
-from core.liblinearutil import *
+from liblinearutil import * as lbl
 
 class Classification():
 
@@ -30,7 +30,7 @@ class Classification():
         return int(temp)
 
     def __convert_lines_and_predict(self, rows, label_encoder, pred_file):
-        model = load_model(self.model)
+        model = lbl.load_model(self.model)
         X = np.array([])
         splitted_rows_id = []
         first = True
@@ -44,7 +44,7 @@ class Classification():
             else:
                 X = np.append(X, np.array(splitted_row_features))
         X = X.reshape((i+1, len(splitted_row_features)))
-        y_pred, y_acc, y_val = predict([], X, model, '-q')
+        y_pred, y_acc, y_val = lbl.predict([], X, model, '-q')
         y_pred = [int(label) for label in y_pred]
         y_pred = label_encoder.inverse_transform(y_pred)
         y_pred = [pred.replace('\n', "") for pred in y_pred]

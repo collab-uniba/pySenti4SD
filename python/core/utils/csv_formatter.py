@@ -1,7 +1,7 @@
 import csv
 from collections import OrderedDict
 
-from utils.csv_utils import CsvUtils 
+from csv_utils import CsvUtils
 
 class CsvFormatter():
 
