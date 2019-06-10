@@ -103,8 +103,8 @@ else
   trainFile=${inputFiles[0]}
   testFile=${inputFiles[1]} 
 
-  python $SCRIPTDIR/python/csv_processing.py -i $trainFile -d $csvDelimiter -c text -c polarity
-  python $SCRIPTDIR/python/csv_processing.py -i $testFile -d $csvDelimiter -c text -c polarity
+  python $SCRIPTDIR/python/csv_processing.py -i $trainFile -d $csvDelimiter -c Text -c Polarity
+  python $SCRIPTDIR/python/csv_processing.py -i $testFile -d $csvDelimiter -c Text -c Polarity
 
   IFS='.' read -ra FILENAMESPLIT <<< "$trainFile"
   jarTrainFile="${FILENAMESPLIT[0]}_jar.csv"

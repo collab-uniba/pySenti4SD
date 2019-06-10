@@ -37,7 +37,7 @@ class CsvUtils():
         for i in range(0, len(rows)):
             values = rows[i].split(',')
             splitted_row_features = [float(value) for value in values[1:-2]]
-            splitted_row_label = values[-1]
+            splitted_row_label = values[-1].rstrip('\n')
             if first:
                 X = np.array(splitted_row_features)
                 y = np.array(splitted_row_label)

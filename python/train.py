@@ -48,6 +48,22 @@ def main():
     seed = np.random.seed(42)
 
     jobs_number = CoreUtils.check_jobs_number(args.jobs_number)
+
+    #if args.output_folder == 'liblinear_perfomance':
+    #    output_path = Path('liblinear_perfomance')
+    #else:
+    #    output_path = Path(f'{args.output_folder}/liblinear_perfomance')
+    output_path = Path('liblinear_perfomance')
+    output_path.mkdir(parents=True, exist_ok=True)
+    output_path = output_path.resolve()
+
+    dir_path = output_path.parent
+
+    solvers_path = Path(f'{Path.cwd()}/liblinear_solvers').resolve()
+
+    print(output_path)
+    print(dir_path)
+    print(solvers_path)
     
     if len(args.input) == 1:
 
@@ -94,13 +110,16 @@ def main():
         print("Too many input arguments.")
 
     logging.info("Start parameter tuning")
-    solvers_path = f"{os.path.dirname(os.path.abspath(__file__))}\liblinear_solvers"
-    tuning = Tuning(jobs_number, solvers_path)
-    best_solver_value, best_c_value = tuning.tuning_parameter(X_train, X_test, y_train, y_test, 'output')
+    current_path = Path.cwd()
+    solvers_path = Path(f'{current_path}/liblinear_solvers').resolve()
+    #solvers_path = f"{os.path.dirname(os.path.abspath(__file__))}\liblinear_solvers"
+    tuning = Tuning(jobs_number, solvers_path, output_path)
+    best_solver_name, best_solver_value, best_c_value = tuning.tuning_parameter(X_train, X_test, y_train, y_test)
+    #tuning.save_best_perfomance(dir_path)
     logging.info("End parameter tuning")
 
     logging.info("Start training model")
-    train = Train(jobs_number, best_solver_value, best_c_value, args.model_name)
+    train = Train(jobs_number, best_solver_value, best_c_value, args.model)
     train.train_model(X_train, X_test, y_train, y_test)
     logging.info("End training model")
     
