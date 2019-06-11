@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd5dea99-bca6-44fe-9612-d363938e9340" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Senti4SD.model" beforeDir="false" afterPath="$PROJECT_DIR$/Senti4SD.model" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python/core/train_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/core/train_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python/core/tuning_parameter.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/core/tuning_parameter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/core/utils/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/core/utils/report.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/train.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,11 +28,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/python/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="123" column="39" selection-start-line="123" selection-start-column="39" selection-end-line="123" selection-end-column="39" />
+            <state relative-caret-position="128">
+              <caret line="62" column="49" selection-start-line="62" selection-start-column="49" selection-end-line="62" selection-end-column="49" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -42,8 +43,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python/core/tuning_parameter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="311">
-              <caret line="82" selection-start-line="82" selection-end-line="82" />
+            <state relative-caret-position="328">
+              <caret line="128" column="50" selection-start-line="128" selection-start-column="50" selection-end-line="128" selection-end-column="50" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -54,20 +55,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python/core/train_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="18" column="60" lean-forward="true" selection-start-line="18" selection-start-column="60" selection-end-line="18" selection-end-column="60" />
+            <state relative-caret-position="-25">
+              <caret line="29" column="46" selection-start-line="29" selection-start-column="46" selection-end-line="29" selection-end-column="46" />
               <folding>
-                <element signature="e#0#46#0" expanded="true" />
+                <element signature="e#0#4#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python/core/utils/report.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+            <state relative-caret-position="238">
+              <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -107,10 +108,10 @@
         <option value="$PROJECT_DIR$/python/classification_task.py" />
         <option value="$PROJECT_DIR$/python/core/utils/csv_utils.py" />
         <option value="$PROJECT_DIR$/train.sh" />
-        <option value="$PROJECT_DIR$/python/core/tuning_parameter.py" />
+        <option value="$PROJECT_DIR$/python/core/utils/report.py" />
         <option value="$PROJECT_DIR$/python/core/train_model.py" />
         <option value="$PROJECT_DIR$/python/train.py" />
-        <option value="$PROJECT_DIR$/python/core/utils/report.py" />
+        <option value="$PROJECT_DIR$/python/core/tuning_parameter.py" />
       </list>
     </option>
   </component>
@@ -198,12 +199,12 @@
       <workItem from="1560153368606" duration="28055000" />
       <workItem from="1560197182130" duration="1425000" />
       <workItem from="1560198663261" duration="3359000" />
-      <workItem from="1560234631815" duration="639000" />
+      <workItem from="1560234631815" duration="7754000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33478000" />
+    <option name="totallyTimeSpent" value="40593000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -216,9 +217,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1936912" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1936912" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -232,7 +232,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.32937366" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.32937366" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -339,10 +339,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/python/core/utils/report.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/core/train_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-25">
+          <caret line="29" column="46" selection-start-line="29" selection-start-column="46" selection-end-line="29" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#4#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/python/core/tuning_parameter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="311">
-          <caret line="82" selection-start-line="82" selection-end-line="82" />
+        <state relative-caret-position="328">
+          <caret line="128" column="50" selection-start-line="128" selection-start-column="50" selection-end-line="128" selection-end-column="50" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
@@ -351,30 +371,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/python/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="123" column="39" selection-start-line="123" selection-start-column="39" selection-end-line="123" selection-end-column="39" />
+        <state relative-caret-position="128">
+          <caret line="62" column="49" selection-start-line="62" selection-start-column="49" selection-end-line="62" selection-end-column="49" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python/core/train_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="18" column="60" lean-forward="true" selection-start-line="18" selection-start-column="60" selection-end-line="18" selection-end-column="60" />
-          <folding>
-            <element signature="e#0#46#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python/core/utils/report.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
           </folding>
         </state>
       </provider>

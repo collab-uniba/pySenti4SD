@@ -119,7 +119,6 @@ class Tuning():
                     current_c_value = c_value
             tuning_time = time() - time_start
             tuning_time = strftime("%H:%M:%S", gmtime(tuning_time))
-            print(tuning_time)
 
             #Training current model for testing
             accuracy = self.__train_and_predict(X_train, X_test, y_train, y_test, solver_value, current_c_value)

@@ -11,6 +11,9 @@ class Report():
     def print_report(self):
         print(classification_report(self.y_true, self.y_pred))
 
+    def get_report(self):
+        return classification_report(self.y_true, self.y_pred)
+
     def get_micro_score(self):
         return precision_recall_fscore_support(self.y_true, self.y_pred, average='micro')
 

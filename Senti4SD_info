@@ -1,0 +1,14 @@
+Solver name: L1-regularized logistic regression
+Solver value: 6
+C value: 0.5
+Accuracy score: 0.8748114630467572
+Perfomance on test set:
+              precision    recall  f1-score   support
+
+    negative       0.82      0.88      0.85       360
+     neutral       0.87      0.82      0.85       508
+    positive       0.92      0.93      0.93       458
+
+   micro avg       0.87      0.87      0.87      1326
+   macro avg       0.87      0.88      0.87      1326
+weighted avg       0.88      0.87      0.87      1326

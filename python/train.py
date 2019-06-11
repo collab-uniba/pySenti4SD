@@ -61,10 +61,6 @@ def main():
 
     solvers_path = Path(f'{Path.cwd()}/liblinear_solvers').resolve()
     model_path = f"{dir_path}/{args.model}.model"
-
-    print(output_path)
-    print(dir_path)
-    print(solvers_path)
     
     if len(args.input) == 1:
 
@@ -121,8 +117,8 @@ def main():
 
     logging.info("Start training model")
     train = Train(jobs_number, best_solver_name, best_solver_value, best_c_value, model_path)
-    train.save_best_perfomance(dir_path)
     train.train_model(X_train, X_test, y_train, y_test)
+    train.save_best_perfomance(dir_path)
     logging.info("End training model")
     
    
