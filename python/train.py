@@ -60,6 +60,7 @@ def main():
     dir_path = output_path.parent
 
     solvers_path = Path(f'{Path.cwd()}/liblinear_solvers').resolve()
+    model_path = f"{dir_path}/{args.model}.model"
 
     print(output_path)
     print(dir_path)
@@ -119,7 +120,8 @@ def main():
     logging.info("End parameter tuning")
 
     logging.info("Start training model")
-    train = Train(jobs_number, best_solver_value, best_c_value, args.model)
+    train = Train(jobs_number, best_solver_name, best_solver_value, best_c_value, model_path)
+    train.save_best_perfomance(dir_path)
     train.train_model(X_train, X_test, y_train, y_test)
     logging.info("End training model")
     

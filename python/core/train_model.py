@@ -3,11 +3,18 @@ from liblinearutil import *
 
 class Train():
     
-    def __init__(self, jobs_number, solver_value, c_value, model_name):
+    def __init__(self, jobs_number, solver_name, solver_value, c_value, model_name):
         self.jobs_number = jobs_number
+        self.solver_name = solver_name
         self.solver_value = solver_value
         self.c_value = c_value
         self.model_name = model_name
+
+    def save_best_perfomance(self, output_dir):
+        with open(f"{output_dir}/model_info", 'w') as bpf:
+            for value in self.best_perfomance.keys():
+                bpf.write(f"{value}: {self.best_perfomance[value]}\n")
+        bpf.close()
 
     def train_model(self, X_train, X_test, y_train, y_test):
         le = LabelEncoder()
@@ -30,5 +37,5 @@ class Train():
         y_test = le.inverse_transform(y_test)
         y_pred = le.inverse_transform(y_pred)
         
-        save_model(f"./{self.model_name}.model", model)
+        save_model(f"{self.model_name}", model)
         return y_pred

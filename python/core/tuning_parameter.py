@@ -81,12 +81,6 @@ class Tuning():
         
         return accuracy
 
-    def save_best_perfomance(self, output_dir):
-        with open(f"{output_dir}/model_info", 'w') as bpf:
-            for value in self.best_perfomance.keys():
-                bpf.write(f"{value}: {self.best_perfomance[value]}\n")
-        bpf.close()
-        
         
     def tuning_parameter(self, X_train, X_test, y_train, y_test):
         y_train, y_test = self.__encode_label(y_train, y_test)
