@@ -28,7 +28,7 @@ if [ $NUMARGS -eq 0 ]; then
     exit 1
 fi
 
-while getopts ":h:i:d:m:c:j:o:" OPTIONS; do
+while getopts ":h:i:d:t:m:c:j:o:" OPTIONS; do
     case $OPTIONS in
         h)
           help

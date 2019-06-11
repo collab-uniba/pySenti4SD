@@ -72,26 +72,32 @@ def main():
     try:
         CsvUtils.check_csv(jar_csv)
         CsvUtils.check_csv(input_csv)
-        classification = Classification(args.model)
-        with open(input_csv, 'r+', newline = '') as csv_file:
-            text = True if args.text.lower() == "true" else False
-            logging.info("Starting classification task")
-            classification.predict(jar_csv, args.chunk_size, CoreUtils.check_jobs_number(args.jobs_number), args.output)
-            logging.info("Ending classification task")
-            logging.info("Starting ordering prediction csv")
-            CsvUtils.order_csv(args.output, 'ID')
-            logging.info("Ending ordering prediction csv")
-            logging.info("Starting rewriting prediction csv")
-            #TODO handle wrong delimiter
-            if args.delimiter.lower() == 'c':
-                classification.write_id_and_text(input_csv, ',', args.output, text)
-            elif args.delimiter.lower() == 'sc':
-                classification.write_id_and_text(input_csv, ';', args.output, text)
-            logging.info("Ending rewriting prediction csv")
-        csv_file.close()
     except OSError as e:
         logging.error(e)
         sys.exit(1)
+
+    if not Path(args.model).exists():
+        print("Model doesn't exist. Provide a correct path to the model, or train a new one using the train script.")
+        sys.exit(1)
+
+    output_path = Path(f"{Path.cwd()}/predictions")
+    output_path.mkdir(parents = True, exist_ok = True )
+    output_path = f"{output_path.resolve()}/{args.output}"
+    classification = Classification(args.model)
+    text = True if args.text.lower() == "true" else False
+    logging.info("Starting classification task")
+    classification.predict(jar_csv, args.chunk_size, CoreUtils.check_jobs_number(args.jobs_number), output_path)
+    logging.info("Ending classification task")
+    logging.info("Starting ordering prediction csv")
+    CsvUtils.order_csv(output_path, 'ID')
+    logging.info("Ending ordering prediction csv")
+    logging.info("Starting rewriting prediction csv")
+    if args.delimiter.lower() == 'c':
+        classification.write_id_and_text(input_csv, ',', output_path, text)
+    elif args.delimiter.lower() == 'sc':
+        classification.write_id_and_text(input_csv, ';', output_path, text)
+    logging.info("Ending rewriting prediction csv")
+
 
 
 if __name__ == '__main__':
