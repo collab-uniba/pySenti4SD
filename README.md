@@ -22,11 +22,9 @@ $ git lfs clone https://github.com/collab-uniba/pySenti4SD.git
 * python 3.4+
     * Libraries
         * ```numpy, pandas, scipy, scikit-learn, joblib```
+        * Installation:  
+        ```python -m pip install -r requirements.txt```
     
-#### Install requirements ####
-```bash
-sh requirements.sh
-```
 
 ## Usage ##
 In the following, we show first how to train a new model for polarity classification and, then, how to test the model on unseen data.  
@@ -50,7 +48,7 @@ where
   """@IgnacioOcampo, I gave up after a while I am afraid :(""";negative    
   …
   ```
-  the same settings are valid if the test set is used separately.
+  same settings are valid if the test set is used separately.
 * ```-d csv-delimiter```: the delimiter used in the csv file, where c stands for comma and sc for semicolon. [Default value: "c"]
 * ```-g```: enables the extraction of n-grams (i.e,. bigrams and unigrams). [optional]
 * ```-c chunk-size```: the number of rows to read from the dataset per time, to avoid high memory usage. [Default value: 1000]
