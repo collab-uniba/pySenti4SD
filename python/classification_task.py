@@ -30,9 +30,8 @@ def main():
                        default = 'c')
     parser.add_argument('-t',
                         '--text',
-                        help = 'true for write input documents in prediction csv file, otherwise false. (defualt = false)',
-                        type = str,
-                        default = "false")
+                        help = 'enables documents saving along with the prediction labels inside "predictions.csv" file.',
+                        action = "store_true")
     parser.add_argument('-m',
                         '--model',
                         help = 'prediction model (default = Senti4SD.model)',
@@ -54,7 +53,6 @@ def main():
                         type = str,
                         default = 'predictions.csv')
     args = parser.parse_args()
-
 
     #TODO Add again second input line
     if len(args.input) == 2:
@@ -84,7 +82,6 @@ def main():
     output_path.mkdir(parents = True, exist_ok = True )
     output_path = f"{output_path.resolve()}/{args.output}"
     classification = Classification(args.model)
-    text = True if args.text.lower() == "true" else False
     logging.info("Starting classification task")
     classification.predict(jar_csv, args.chunk_size, CoreUtils.check_jobs_number(args.jobs_number), output_path)
     logging.info("Ending classification task")
@@ -93,9 +90,9 @@ def main():
     logging.info("Ending ordering prediction csv")
     logging.info("Starting rewriting prediction csv")
     if args.delimiter.lower() == 'c':
-        classification.write_id_and_text(input_csv, ',', output_path, text)
+        classification.write_id_and_text(input_csv, ',', output_path, args.text)
     elif args.delimiter.lower() == 'sc':
-        classification.write_id_and_text(input_csv, ';', output_path, text)
+        classification.write_id_and_text(input_csv, ';', output_path, args.text)
     logging.info("Ending rewriting prediction csv")
 
 

@@ -32,7 +32,6 @@ def main():
     input_csv = args.input
     input_csv = Path(input_csv).resolve()
     output_csv = "{}/{}_jar.csv".format(input_csv.parent, input_csv.name.split('.')[0])
-    print(args.columns)
     try:
         CsvUtils.check_csv(input_csv)
         logging.info("Start formatting csv file")
