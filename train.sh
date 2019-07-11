@@ -3,17 +3,22 @@
 SCRIPTDIR=$(dirname "$0")
 
 csvDelimiter='c'
+grams=false
 chunkSize=1000
 jobsNumber=1
 modelFile="$SCRIPTDIR/Senti4SD"
 
 help(){
-    echo "Usage: classificationTask.sh -i input.csv [-d documents] [-m model] [-c chunk_size] [-j jobs_number] [-o Senti4SD.model]"
-    echo "-i train and test data for model training and evaluation. If only train is passed the script split the data in 70% train and 30% test [required]"
-    echo '-d delimiter used in csv file, "c" for comma or "sc" for semicolon'
-    echo "-c chunk size [optional] [default = 1000]"
-    echo "-j number of jobs for parallelism. In case of '-1' value it will use all available cores. [optional] [default = -1]"
-    echo "-o output file with trained model [optional][default = Senti4SD.model]"
+    echo "Usage-1: sh train.sh -i train.csv [-d csv-delimiter] [-g] [-c chunk_size] [-j jobs_number] [-o Senti4SD.model]"
+    echo "or"
+    echo "Usage-2: sh train.sh -i train.csv -i test.csv [-d csv-delimiter] [-g] [-c chunk_size] [-j jobs_number] [-o Senti4SD.model]"
+    echo "-i -- the input file, containing the corpus for the training; it's possible to run the script with two separated datasets, one for training and the other for testing [see Usage-2]. [required]"
+    echo '-d -- the delimiter used in the csv file, where c stands for comma and sc for semicolon. [Default value: "c"]'
+    echo '-g -- enables the extraction of n-grams (i.e,. bigrams and unigrams)'	
+    echo "-c -- the number of rows to read from the dataset per time, to avoid high memory usage. [Default value: 1000]"
+    echo "-j -- the number of cores to use during csv reading phase. If you pass -1 all cores will be used. 
+		If you pass a number higher than your total core number, the script will use all the cores. [Default value: 1] "
+    echo "-o -- the name of trained model. [Default value: 'Senti4SD.model']"
     exit 1
 }
 
@@ -23,7 +28,7 @@ if [ $NUMARGS -eq 0 ]; then
     exit 1
 fi
 
-while getopts ":h:i:d:m:c:j:o:" OPTIONS; do
+while getopts "h:i:d:m:c:j:o:g" OPTIONS; do
     case $OPTIONS in
         h)
           help
@@ -34,6 +39,9 @@ while getopts ":h:i:d:m:c:j:o:" OPTIONS; do
         d)
           csvDelimiter=$OPTARG
           ;;
+	g)
+	  grams=true
+	  ;;
         c)
           chunkSize=$OPTARG
           ;;
@@ -114,18 +122,35 @@ else
 
   echo $jarTrainFile
   echo $jarTestFile
+  
+  if [ "$grams" = true ] ; then
+	java -jar $SCRIPTDIR/java/NgramsExtraction.jar $jarTrainFile -L
+  
 
-    #-F A: all features to be considered
-    #-i file_name: a file containg a document for every line
-    #-W cbow600.bin: DSM to be loaded
-    #-oc file_name.csv: output dataset containg the features extracted
-    #-vd numeric: vectors size (for cbow600.bin the size is 600)
-    #-L: if present corpus have a label column [optional]
-    #-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
-    #-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
+    	#-F A: all features to be considered
+    	#-i file_name: a file containg a document for every line
+    	#-W cbow600.bin: DSM to be loaded
+    	#-oc file_name.csv: output dataset containg the features extracted
+    	#-vd numeric: vectors size (for cbow600.bin the size is 600)
+    	#-L: if present corpus have a label column [optional]
+    	#-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
+    	#-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
 
-  java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarTrainFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeaturesTrain.csv -vd 600 -L
-  java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarTestFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeaturesTest.csv -vd 600 -L
+  	java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarTrainFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeaturesTrain.csv -vd 600 -L -ul $SCRIPTDIR/UnigramsList -bl 	$SCRIPTDIR/BigramsList
+  	java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarTestFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeaturesTest.csv -vd 600 -L -ul $SCRIPTDIR/UnigramsList -bl 		$SCRIPTDIR/BigramsList
+  else
+        #-F A: all features to be considered
+    	#-i file_name: a file containg a document for every line
+    	#-W cbow600.bin: DSM to be loaded
+    	#-oc file_name.csv: output dataset containg the features extracted
+    	#-vd numeric: vectors size (for cbow600.bin the size is 600)
+    	#-L: if present corpus have a label column [optional]
+    	#-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
+    	#-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
+
+  	java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarTrainFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeaturesTrain.csv -vd 600 -L
+  	java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarTestFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeaturesTest.csv -vd 600 -L
+  fi
 
   python $SCRIPTDIR/python/train.py -i $SCRIPTDIR/temp_features/extractedFeaturesTrain.csv -i $SCRIPTDIR/temp_features/extractedFeaturesTest.csv -c $chunkSize -j $jobsNumber -m $modelFile
     
