@@ -50,6 +50,7 @@ where
   ```
   same settings are valid if the test set is used separately.
 * ```-d csv-delimiter```: the delimiter used in the csv file, where c stands for comma and sc for semicolon. [Default value: "c"]
+* ```-F features```: all features to be considered. A stands for all, L stands for lexicon fetures, S stands for semantic features and K stands for keyword features. [Default value: A]
 * ```-g```: enables the extraction of n-grams (i.e,. bigrams and unigrams). [optional]
 * ```-c chunk-size```: the number of rows to read from the dataset per time, to avoid high memory usage. [Default value: 1000]
 * ```-j jobs-number```: the number of cores to use during csv reading phase. If you pass -1 all cores will be used. 
@@ -79,6 +80,7 @@ where
   ```
   If the dataset contains a column named ID, this will be saved inside the predictions.csv file.
 * ```-d csv-delimiter```: the delimiter used in the csv file, where c stands for comma and sc for semicolon. [Default value: "c"]
+* ```-F features```: all features to be considered. A stands for all, L stands for lexicon fetures, S stands for semantic features and K stands for keyword features. [Default value: A]
 * ```-g```: enables use of UnigramsList and BigramsList.
 * ```-t```: enables documents saving along with the prediction labels inside "predictions.csv" file. [optional]
 * ```-m model-name```: the name of classification model to use to classifiy documents. [Default value: "Senti4SD"] 
