@@ -4,6 +4,7 @@ SCRIPTDIR=$(dirname "$0")
 
 inputFile=""
 csvDelimiter='c'
+features='A'
 grams=false
 documents=false
 model="$SCRIPTDIR/Senti4SD.model"
@@ -12,10 +13,12 @@ jobsNumber=1
 outputFile="$SCRIPTDIR/predictions.csv"
 
 help(){
-    echo "Usage: sh classification.sh -i input.csv [-d delimiter] [-t documents] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
+    echo "Usage: sh classification.sh -i input.csv [-d delimiter] [-F features] [-g] [-t] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
     echo "-i input file to classify [required]"
     echo '-d delimiter used in csv file, "c" for comma or "sc" for semicolon'
-    echo "-t true to print document in predictions file, false otherwise [default = false]"
+    echo '-F -- all features to be considered. A stands for all, L stands for lexicon fetures, S stands for semantic features and K stands for keyword features. [Default value: A]'
+    echo "-g -- enables use of custom UnigramsList and BigramsList [optional]"
+    echo "-t -- enables documents saving along with the prediction labels inside 'predictions.csv' file. [optional]"
     echo "-m prediction model [default = Senti4SD]"
     echo "-c chunk size [default = 200]"
     echo "-j number of jobs for parallelism. In case of '-1' value it will use all available cores [default = -1]"
@@ -29,7 +32,7 @@ if [ $NUMARGS -eq 0 ]; then
     exit 1
 fi
 
-while getopts "h:i:d:m:c:j:o:tg" OPTIONS; do
+while getopts "h:i:d:F:m:c:j:o:tg" OPTIONS; do
     case $OPTIONS in
         h)
           help
@@ -43,8 +46,11 @@ while getopts "h:i:d:m:c:j:o:tg" OPTIONS; do
         t)
           documents=true
           ;;
-	g)
-	  grams=true
+	    g)
+	      grams=true
+          ;;
+        F)
+          features=$OPTARG
           ;;
         m)
           model="$SCRIPTDIR/$OPTARG"
@@ -104,7 +110,7 @@ if [ "$grams" = true ] ; then
     #-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
     #-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
 
-    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeatures.csv -vd 600 -ul $unigramsFile -bl $bigramsFile
+    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F $features -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeatures.csv -vd 600 -ul $unigramsFile -bl $bigramsFile
 
     if [ "$documents" = true ] ; then
         python $SCRIPTDIR/python/classification_task.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -i $inputFile -d $csvDelimiter -t -m $model -c $chunkSize -j $jobsNumber -o $outputFile
@@ -124,7 +130,7 @@ else
     #-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
     #-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
 
-    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F A -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeatures.csv -vd 600
+    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F $features -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeatures.csv -vd 600
 
     if [ "$documents" = true ] ; then
         python $SCRIPTDIR/python/classification_task.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -i $inputFile -d $csvDelimiter -t -m $model -c $chunkSize -j $jobsNumber -o $outputFile
