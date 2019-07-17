@@ -11,7 +11,7 @@ class CsvFormatter():
         self.csv_delimiter = csv_delimiter
     
     def get_rows(self, input_csv):
-        with open(input_csv, 'r+', newline = '') as csv_file:
+        with open(input_csv, 'r+', newline = '', encoding='utf8') as csv_file:
             header_list_copy = self.header_list.copy()
             csv_file.seek(0)
             csv_file_reader =  csv.reader(csv_file, delimiter = self.csv_delimiter)
@@ -33,7 +33,7 @@ class CsvFormatter():
                     next(csv_file_reader)
                 if count != len(self.header_list):
                     csv_file.close()
-                    raise IOError("Headers not found in {}".format(input_csv))
+                    raise IOError("{} not found in {}".format(header_list_copy, input_csv))
             else:
                 csv_file.close()
                 raise IOError("Too many header in the list.")

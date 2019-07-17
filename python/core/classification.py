@@ -79,13 +79,13 @@ class Classification():
     def write_id_and_text(self, input_csv, csv_delimiter, pred_csv, text = False):
         dataframe = OrderedDict()
         try:
-            csv_fomatter = CsvFormatter(['id'], csv_delimiter)
+            csv_fomatter = CsvFormatter(['ID'], csv_delimiter)
             dataframe.update(csv_fomatter.get_rows(input_csv))
         except IOError as e:
             print(e)
         if text:
             try:
-                csv_fomatter = CsvFormatter(['text'], csv_delimiter)
+                csv_fomatter = CsvFormatter(['TEXT'], csv_delimiter)
                 dataframe.update(csv_fomatter.get_rows(input_csv))
             except IOError as e:
                 print(e)
