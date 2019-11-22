@@ -96,7 +96,7 @@ if [ $INPUTFILESLENGTH -eq 1 ]; then
     #-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
     #-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
 
-  java -jar $SCRIPTDIR/Senti4SD-fast.jar -F $features -i $jarInputFile -W $SCRIPTDIR/dsm.bin -oc $SCRIPTDIR/extractedFeatures.csv -vd 600 -L
+  java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F $features -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeatures.csv -vd 600 -L
 
   python $SCRIPTDIR/python/train.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -c $chunkSize -j $jobsNumber -m $modelFile
     
