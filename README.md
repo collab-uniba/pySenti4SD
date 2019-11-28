@@ -23,7 +23,7 @@ $ git lfs clone https://github.com/collab-uniba/pySenti4SD.git
     * Libraries
         * ```numpy, pandas, scipy, scikit-learn, joblib```
         * Installation:  
-        ```python -m pip install -r requirements.txt```
+        ```pip install -r requirements.txt```
     
 
 ## Usage ##
