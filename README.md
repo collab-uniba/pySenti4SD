@@ -19,7 +19,7 @@ $ git lfs clone https://github.com/collab-uniba/pySenti4SD.git
 ### Requirements ###
 
 * java 8+
-* python 3.4+
+* python 3.7+
     * Libraries
         * ```numpy, pandas, scipy, scikit-learn, joblib```
         * Installation:  
