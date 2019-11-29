@@ -66,11 +66,10 @@ class CsvUtils():
                     stop = True
                     read_rows.append(temp_rows)
                 finally:
-                    if len(temp_rows) != 0:
-                        with Pool(jobs_number) as p:
-                            results = p.map(CsvUtils.convert_lines, read_rows)
-                        for result in results:
-                            rows.append(result)
+                    with Pool(jobs_number) as p:
+                        results = p.map(CsvUtils.convert_lines, read_rows)
+                    for result in results:
+                        rows.append(result)
         csv.close()
         first = True
         for row in rows:
