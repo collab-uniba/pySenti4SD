@@ -2,6 +2,11 @@
 
 SCRIPTDIR=$(dirname "$0")
 
+# Define a timestamp function
+timestamp() {
+  date +"%s"  # current time
+}
+
 inputFile=""
 csvDelimiter='c'
 features='A'
@@ -11,7 +16,9 @@ model="$SCRIPTDIR/Senti4SD.model"
 chunkSize=200
 jobsNumber=1
 outputFile="$SCRIPTDIR/predictions.csv"
-
+tmpDir="$SCRIPTDIR/temp_features"
+time_stmp=$(timestamp) 
+tmpFile="$time_stmp.csv"
 help(){
     echo "Usage: sh classification.sh -i input.csv [-d delimiter] [-F features] [-g] [-t] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
     echo "-i input file to classify [required]"
@@ -63,7 +70,7 @@ while getopts "h:i:d:F:m:c:j:o:tg" OPTIONS; do
           ;;
         o)
           outputFile="$SCRIPTDIR/$OPTARG"
-          ;;
+          ;;      
         \?)
           echo -e \\n"Option $OPTARG not allowed."
           help
@@ -80,12 +87,13 @@ if [ ! -f $inputFile ]; then
     exit 1
 fi 
 
-mkdir -p $SCRIPTDIR/temp_features;
+mkdir -p $tmpDir;
 
 python $SCRIPTDIR/python/csv_processing.py -i $inputFile -d $csvDelimiter -c text
 
 IFS='.' read -ra FILENAMESPLIT <<< "$inputFile"
 jarInputFile="${FILENAMESPLIT[0]}_jar.csv"
+
 
 if [ "$grams" = true ] ; then
     unigramsFile="$SCRIPTDIR/UnigramsList"
@@ -110,15 +118,15 @@ if [ "$grams" = true ] ; then
     #-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
     #-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
 
-    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F $features -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeatures.csv -vd 600 -ul $unigramsFile -bl $bigramsFile
+    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F $features -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc "$tmpDir/$tmpFile" -vd 600 -ul $unigramsFile -bl $bigramsFile
 
     if [ "$documents" = true ] ; then
-        python $SCRIPTDIR/python/classification_task.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -i $inputFile -d $csvDelimiter -t -m $model -c $chunkSize -j $jobsNumber -o $outputFile
+        python $SCRIPTDIR/python/classification_task.py -i "$tmpDir/$tmpFile" -i $inputFile -d $csvDelimiter -t -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     else
-        python $SCRIPTDIR/python/classification_task.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -i $inputFile -d $csvDelimiter -m $model -c $chunkSize -j $jobsNumber -o $outputFile
+        python $SCRIPTDIR/python/classification_task.py -i "$tmpDir/$tmpFile" -i $inputFile -d $csvDelimiter -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     fi
     
-    rm -rf $SCRIPTDIR/temp_features
+    rm -rf $tmpDir
     rm $jarInputFile
 else
     #-F A: all features to be considered
@@ -130,14 +138,14 @@ else
     #-ul file_name: unigram's list to use for feature extraction. If not present default Senti4SD unigram's list will be used [optional]
     #-bl file_name: bigram's list to use for feature extraction. If not present default Senti4SD bigram's list will be used [optional]
 
-    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F $features -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc $SCRIPTDIR/temp_features/extractedFeatures.csv -vd 600
+    java -jar $SCRIPTDIR/java/Senti4SD-fast.jar -F $features -i $jarInputFile -W $SCRIPTDIR/java/dsm.bin -oc "$tmpDir/$tmpFile" -vd 600
 
     if [ "$documents" = true ] ; then
-        python $SCRIPTDIR/python/classification_task.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -i $inputFile -d $csvDelimiter -t -m $model -c $chunkSize -j $jobsNumber -o $outputFile
+        python $SCRIPTDIR/python/classification_task.py -i "$tmpDir/$tmpFile" -i $inputFile -d $csvDelimiter -t -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     else
-        python $SCRIPTDIR/python/classification_task.py -i $SCRIPTDIR/temp_features/extractedFeatures.csv -i $inputFile -d $csvDelimiter -m $model -c $chunkSize -j $jobsNumber -o $outputFile
+        python $SCRIPTDIR/python/classification_task.py -i "$tmpDir/$tmpFile" -i $inputFile -d $csvDelimiter -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     fi
     
-    rm -rf $SCRIPTDIR/temp_features
+    rm -rf $tmpDir
     rm $jarInputFile
 fi
