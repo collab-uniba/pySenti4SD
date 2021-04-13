@@ -126,7 +126,7 @@ if [ "$grams" = true ] ; then
         python $SCRIPTDIR/python/classification_task.py -i "$tmpDir/$tmpFile" -i $inputFile -d $csvDelimiter -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     fi
     
-    rm -rf $tmpDir
+    rm "$tmpDir/$tmpFile"
     rm $jarInputFile
 else
     #-F A: all features to be considered
@@ -146,6 +146,6 @@ else
         python $SCRIPTDIR/python/classification_task.py -i "$tmpDir/$tmpFile" -i $inputFile -d $csvDelimiter -m $model -c $chunkSize -j $jobsNumber -o $outputFile
     fi
     
-    rm -rf $tmpDir
+    rm "$tmpDir/$tmpFile"
     rm $jarInputFile
 fi
