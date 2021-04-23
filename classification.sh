@@ -87,7 +87,7 @@ if [ ! -f $inputFile ]; then
     exit 1
 fi 
 
-mkdir $tmpDir;
+mkdir -p $tmpDir;
 
 python $SCRIPTDIR/python/csv_processing.py -i $inputFile -d $csvDelimiter -c text
 
