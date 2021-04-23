@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-#Dockerfile used for testing
-Dockerfile
-=======
->>>>>>> b021ba1c7a362ec4ad39fbfafcdd440d19651dce
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
