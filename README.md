@@ -10,14 +10,16 @@ Please, cite the following paper if you intend to use our tool for your own rese
 
 ### Installation ###
 
-**NOTE**: You will need to install [Git LFS](https://git-lfs.github.com) extension to check out this project. Once installed and initialized, simply run:
+**NOTE**: You will need to install [dvc](https://dvc.org) to check out this project. Once installed and initialized, simply the following:
 
 ```bash
-$ git lfs clone https://github.com/collab-uniba/pySenti4SD.git
+git clone https://github.com/collab-uniba/pySenti4SD.git
+dvc pull
 ```
 
 ### Requirements ###
 
+* dvc
 * java 8+
 * python 3.7+
     * Libraries
