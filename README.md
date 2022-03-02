@@ -14,7 +14,7 @@ Please, cite the following paper if you intend to use our tool for your own rese
 
 ```bash
 git clone https://github.com/collab-uniba/pySenti4SD.git
-dvc pull
+dvc pull -r origin
 ```
 
 ### Requirements ###
