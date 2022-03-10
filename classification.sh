@@ -2,11 +2,6 @@
 
 SCRIPTDIR=$(dirname "$0")
 
-# Define a timestamp function
-timestamp() {
-  date +"%s"  # current time
-}
-
 inputFile=""
 csvDelimiter='c'
 features='A'
@@ -17,8 +12,6 @@ chunkSize=200
 jobsNumber=1
 outputFile="$SCRIPTDIR/predictions.csv"
 tmpDir="$SCRIPTDIR/temp_features"
-time_stmp=$(timestamp) 
-tmpFile="$time_stmp.csv"
 help(){
     echo "Usage: sh classification.sh -i input.csv [-d delimiter] [-F features] [-g] [-t] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
     echo "-i input file to classify [required]"
@@ -93,7 +86,7 @@ python $SCRIPTDIR/python/csv_processing.py -i $inputFile -d $csvDelimiter -c tex
 
 IFS='.' read -ra FILENAMESPLIT <<< "$inputFile"
 jarInputFile="${FILENAMESPLIT[0]}_jar.csv"
-
+tmpFile="${FILENAMESPLIT[0]}.csv"
 
 if [ "$grams" = true ] ; then
     unigramsFile="$SCRIPTDIR/UnigramsList"
