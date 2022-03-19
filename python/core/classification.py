@@ -14,6 +14,7 @@ from utils.csv_formatter import CsvFormatter
 
 from liblinearutil import *
 
+
 class Classification():
 
     def __init__(self, model):
@@ -68,10 +69,12 @@ class Classification():
                         temp_rows = []
                         for _ in range (chunk_size):
                             temp_rows.append(next(csv))
-                        read_rows.append(temp_rows)
+                        if temp_rows:
+                          read_rows.append(temp_rows)
                 except StopIteration:
                     stop = True
-                    read_rows.append(temp_rows)
+                    if temp_rows:
+                          read_rows.append(temp_rows)
                 finally:
                     Parallel(n_jobs = jobs_number)(delayed(self.__convert_lines_and_predict)(rows, label_encoder, pred_file) for rows in read_rows)
         csv.close()

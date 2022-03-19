@@ -10,7 +10,7 @@ documents=false
 model="$SCRIPTDIR/Senti4SD.model"
 chunkSize=200
 jobsNumber=1
-outputFile="$SCRIPTDIR/predictions.csv"
+outputFile="predictions.csv"
 
 help(){
     echo "Usage: sh classification.sh -i input.csv [-d delimiter] [-F features] [-g] [-t] [-m model] [-c chunk_size] [-j jobs_number] [-o predictions.csv]"
