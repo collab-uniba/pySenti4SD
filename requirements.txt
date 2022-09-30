@@ -1,4 +1,4 @@
-joblib==0.13.2
+joblib==1.2.0
 llvmlite==0.28.0
 numba==0.43.1
 numpy==1.22.0
